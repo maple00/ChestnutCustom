@@ -1,0 +1,115 @@
+<resources>
+    <string name="app_name">板栗门店</string>
+
+    <!-- 通用-->
+    <string name="common_code_send" translatable="false">发送验证码</string>
+    <string name="common_input_code" translatable="false">输入验证码</string>
+    <string name="common_loading" translatable="false">加载中&#8230;</string>
+    <string name="common_step_commit" translatable="false">提交</string>
+    <string name="common_confirm" translatable="false">确定</string>
+    <string name="common_cancel" translatable="false">取消</string>
+    <string name="common_reset" translatable="false">重置</string>
+    <string name="common_percent" translatable="false">%</string>
+    <string name="common_year" translatable="false">年</string>
+    <string name="common_month" translatable="false">月</string>
+    <string name="common_day" translatable="false">日</string>
+    <string name="common_save" translatable="false">保存</string>
+    <string name="common_choose" translatable="false">请选择</string>
+    <string name="common_input" translatable="false">请输入</string>
+    <string name="common_check_all" translatable="false">查看全部</string>
+    <string name="common_clear_screening" translatable="false">清空筛选</string>
+    <string name="common_delete" translatable="false">删除</string>
+    <string name="common_edit" translatable="false">编辑</string>
+    <string name="common_default_address" translatable="false">默认地址</string>
+    <string name="common_default" translatable="false">默认</string>
+    <string name="common_disable" translatable="false">停用</string>
+    <string name="common_logout">退出登录</string>
+    <string name="common_exit">退出</string>
+    <string name="common_input_phone" translatable="false">请输入手机号</string>
+    <string name="common_get_check_code" translatable="false">获取验证码</string>
+    <string name="common_next_step">下一步</string>
+    <string name="common_search">搜索</string>
+    <!-- Http-->
+    <string name="frame_name">AndroidOHP</string>
+    <!-- 提示-->
+    <string name="hint_layout_no_data" translatable="false">亲，暂无数据</string>
+    <string name="hint_layout_error_request" translatable="false">亲，请求出错了</string>
+    <string name="hint_layout_error_network" translatable="false">亲，没有网络了</string>
+    <!-- 本地异常捕捉-->
+    <string name="crash_error_hint" translatable="false">发生意外错误\n抱歉，给您带来不便</string>
+    <string name="crash_error_restart" translatable="false">重新启动</string>
+    <string name="crash_copy_log" translatable="false">复制日志</string>
+    <string name="crash_error_log" translatable="false">错误日志</string>
+    <string name="crash_error_info" translatable="false">错误信息</string>
+    <string name="crash_error_details" translatable="false">错误详情</string>
+    <string name="crash_close" translatable="false">关闭</string>
+    <!-- 更新-->
+    <string name="update_app" translatable="false">更新</string>
+    <string name="update_status_running" translatable="false">下载中</string>
+    <string name="update_status_successful" translatable="false">立即安装</string>
+    <string name="update_status_failed" translatable="false">下载失败</string>
+    <string name="update_status_paused" translatable="false">暂停中</string>
+    <string name="update_status_pending" translatable="false">等待下载</string>
+    <string name="update_download_fail" translatable="false">启动下载失败</string>
+    <string name="update_permission_hint" translatable="false">必须先要授予权限才能正常下载更新哦</string>
+    <!-- 登录-->
+    <string name="login_text">登录</string>
+    <string name="login_now">立即登录</string>
+    <string name="login_forget_pwd">忘记密码</string>
+    <string name="login_input_account">请输入手机号</string>
+    <string name="login_input_pwd">请输入密码</string>
+    <string name="login_tips">还没有账号？</string>
+    <string name="login_register_now">立即注册</string>
+    <string name="register">注册</string>
+    <string name="register_text">注册账号</string>
+    <string name="register_ver_code">请输入验证码</string>
+    <string name="reset_password">请输入新密码</string>
+    <string name="reset_password_again">请再次输入新密码</string>
+
+    <!-- 项目-->
+    <string name="index_text">首页</string>
+    <string name="index_goods">商品</string>
+    <string name="index_cart">购物车</string>
+    <string name="index_order">我的订单</string>
+    <string name="index_personal">个人中心</string>
+    <string name="time_title" translatable="false">请选择时间</string>
+    <string name="common_hour" translatable="false">时</string>
+    <string name="common_minute" translatable="false">分</string>
+    <string name="common_second" translatable="false">秒</string>
+    <string name="date_title" translatable="false">请选择日期</string>
+    <string name="change_tel_num">修改手机号</string>
+    <string name="add_address">新增地址</string>
+    <string name="address_set_default">设为默认收货地址</string>
+    <string name="feedback_text" translatable="false">问题/意见描述</string>
+    <string name="feedback_desc" translatable="false">请详细描述您的问题</string>
+    <string name="feedback_contact" translatable="false">联系方式</string>
+    <string name="feedback_contact_hint" translatable="false">请填写您的手机号，便于我们与您联系</string>
+    <string name="home_not_merchants">您还未添加商家</string>
+    <string name="home_add_now">立即添加</string>
+    <string name="search_merchants">请输入商家名称/商家编号</string>
+    <string name="search_my_order">搜索我的订单</string>
+    <string name="search_add_merchant">添加商家</string>
+    <string name="search_merchant_num">商家编号</string>
+    <string name="search_obtain_pwd">获取口令</string>
+    <string name="search_pwd">口令</string>
+    <string name="search_confirm_add">确认添加</string>
+    <string name="cart_all_choose">全选</string>
+    <string name="cart_settles_account">去结算</string>
+    <string name="order_present_method">配送方式</string>
+    <string name="order_express_text">快递</string>
+    <string name="order_store_invite">门店自取</string>
+    <string name="order_contact_service">联系客服</string>
+    <string name="order_store_address">门店地址</string>
+    <string name="order_confirm">确认收货</string>
+    <string name="order_commit">提交订单</string>
+    <string name="order_not_more">没有更多订单了~</string>
+    <string name="order_query_order">查看订单</string>
+    <string name="dialog_keep_add">继续添加</string>
+    <string name="dialog_give_up">我不要了</string>
+    <string name="store_history_order">历史订购</string>
+
+    <string name="search_history">历史搜索</string>
+    <string name="search_clear">清空</string>
+    <string name="search_history_record">历史记录</string>
+
+</resources>

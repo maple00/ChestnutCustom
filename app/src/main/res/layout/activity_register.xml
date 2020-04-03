@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_right"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="@dimen/padding_left"
+        android:text="@string/register_text"
+        android:textColor="@color/white66"
+        android:textSize="30sp"
+        android:textStyle="normal" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_right"
+        android:layout_marginEnd="@dimen/padding_left"
+        android:gravity="center_vertical">
+
+        <com.rainwood.tools.view.ClearEditText
+            android:id="@+id/et_register_account"
+            style="@style/EditTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/login_input_account"
+            android:inputType="phone"
+            android:singleLine="true"
+            app:regexType="mobile" />
+
+        <TextView
+            android:id="@+id/tv_send_code"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/padding_right"
+            android:gravity="center"
+            android:text="@string/common_code_send"
+            android:textColor="@color/red30"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+
+    <View
+        style="@style/HorizontalLineStyle"
+        android:layout_marginStart="@dimen/padding_right"
+        android:layout_marginEnd="@dimen/padding_left" />
+
+    <com.rainwood.tools.view.ClearEditText
+        android:id="@+id/et_ver_code"
+        style="@style/EditTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_right"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="@dimen/padding_left"
+        android:hint="@string/register_ver_code"
+        android:inputType="number"
+        android:singleLine="true" />
+
+    <View
+        style="@style/HorizontalLineStyle"
+        android:layout_marginStart="@dimen/padding_right"
+        android:layout_marginEnd="@dimen/padding_left" />
+
+    <com.rainwood.tools.view.PasswordEditText
+        android:id="@+id/et_register_password"
+        style="@style/EditTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_right"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="@dimen/padding_left"
+        android:hint="@string/login_input_pwd"
+        android:singleLine="true"
+        app:regexType="nonnull" />
+
+    <View
+        style="@style/HorizontalLineStyle"
+        android:layout_marginStart="@dimen/padding_right"
+        android:layout_marginEnd="@dimen/padding_left" />
+
+    <Button
+        android:id="@+id/btn_register"
+        style="@style/RedButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_right"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="@dimen/padding_left"
+        android:text="@string/register" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_tips"
+            android:textColor="@color/textColor"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_login_now"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_now"
+            android:textColor="@color/red30"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+</LinearLayout>

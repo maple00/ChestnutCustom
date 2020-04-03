@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App 样式中引用的颜色 -->
+    <color name="colorPrimary">@color/white</color>
+    <color name="colorPrimaryDark">@color/black</color>
+    <color name="colorAccent">#5A8DDF</color>
+    <color name="windowBackground">#F4F4F4</color>
+    <color name="textColor">#333333</color>
+    <color name="textColorHint">#757575</color>
+
+    <!-- 按钮按压时的颜色 -->
+    <!-- 按钮禁用时的颜色 -->
+    <color name="colorButtonDisable">#BBBBBB</color>
+    <!-- 分割线的颜色 -->
+    <color name="colorLine">#ECECEC</color>
+
+    <!-- 对话框确认按钮文本颜色 -->
+    <color name="colorConfirm">#007AFF</color>
+
+    <!-- Base Color-->
+    <!-- 透明色 -->
+    <color name="transparent">#00000000</color>
+
+    <!-- 白色 -->
+    <color name="white">#FFFFFFFF</color>
+    <color name="white90">#E6FFFFFF</color>
+    <color name="whiteF6">#F6F6F6</color>
+    <color name="white66">#666666</color>
+    <color name="white20">#33FFFFFF</color>
+    <color name="white5">#0DFFFFFF</color>
+    <color name="gray_f0">#F0F0F0</color>
+    <color name="fontColor">#999999</color>
+    <color name="gray_white">#cccccc</color>
+    <color name="white10">#FAF7F8</color>
+    <!-- 黑色 -->
+    <color name="black">#FF000000</color>
+    <color name="black5">#0D000000</color>
+    <color name="black00">#000000</color>
+    <color name="black01">#332F40</color>
+    <color name="black45">#73000000</color>
+    <color name="black20">#33000000</color>
+    <color name="black25">#353235</color>
+    <color name="black30">#00FFFFFF</color>
+    <!-- 红色-->
+    <color name="red30">#CC302C</color>
+    <color name="colorCancel">#F44336</color>
+    <color name="red5">#F55850</color>
+
+    <!--灰色-->
+    <color name="gray5">#F8F8F8</color>
+    <color name="gray10">#F6F7F9</color>
+    <color name="gray15">#F1F1F1</color>
+    <color name="gray20">#F3F3F4</color>
+    <color name="gray25">#EEEEEE</color>
+    <color name="gray30">#E6E6E6</color>
+    <!--蓝色-->
+    <color name="blue5">#5D92F7</color>
+    <color name="blue10">#C1E6FF</color>
+    <color name="blue15">#53B9FF</color>
+
+    <!--橙色-->
+    <color name="orange5">#FFBA00</color>
+
+    <!-- 绿色-->
+    <color name="green5">#42D1BF</color>
+
+    <color name="light_gray">#bfbfbf</color>
+</resources>

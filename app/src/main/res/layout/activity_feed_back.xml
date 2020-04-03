@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_title" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:text="@string/feedback_text"
+        android:textColor="@color/fontColor"
+        android:textSize="14sp" />
+
+    <com.rainwood.tools.view.ClearEditText
+        android:id="@+id/et_feedback_text"
+        style="@style/EditTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="15dp"
+        android:gravity="top"
+        android:hint="@string/feedback_desc"
+        android:lineSpacingExtra="24dp"
+        android:textColorHint="@color/gray_white"
+        android:textSize="14sp" />
+
+    <View
+        style="@style/HorizontalLineStyle"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="15dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/feedback_contact"
+        android:textColor="@color/fontColor"
+        android:textSize="14sp" />
+
+    <com.rainwood.tools.view.ClearEditText
+        android:id="@+id/et_contact_tel"
+        style="@style/EditTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="15dp"
+        android:hint="@string/feedback_contact_hint"
+        android:inputType="phone"
+        android:lineSpacingExtra="9dp"
+        app:regexType="mobile" />
+
+    <View
+        style="@style/HorizontalLineStyle"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="15dp" />
+
+    <Button
+        android:id="@+id/btn_commit"
+        style="@style/RedButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginRight="15dp"
+        android:text="@string/common_step_commit" />
+
+</LinearLayout>

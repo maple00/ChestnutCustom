@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.activity.HomeActivity">
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/vv_line"
+        android:background="@color/white" />
+
+    <View
+        android:id="@+id/vv_line"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_above="@+id/tabs_rg"
+        android:background="@color/whiteF6" />
+
+    <!-- 底部按钮-->
+    <RadioGroup
+        android:id="@+id/tabs_rg"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_home"
+            style="@style/Custom.TabRadioButton"
+            android:checked="true"
+            android:drawableTop="@drawable/tab_record_selector"
+            android:text="@string/index_text" />
+
+        <RadioButton
+            android:id="@+id/rb_goods"
+            style="@style/Custom.TabRadioButton"
+            android:drawableTop="@drawable/tab_goods_selector"
+            android:text="@string/index_goods" />
+
+        <RadioButton
+            android:id="@+id/rb_cart"
+            style="@style/Custom.TabRadioButton"
+            android:drawableTop="@drawable/tab_cart_selector"
+            android:text="@string/index_cart" />
+
+        <RadioButton
+            android:id="@+id/rb_order"
+            style="@style/Custom.TabRadioButton"
+            android:drawableTop="@drawable/tab_order_selector"
+            android:text="@string/index_order" />
+
+        <RadioButton
+            android:id="@+id/rb_my"
+            style="@style/Custom.TabRadioButton"
+            android:drawableTop="@drawable/tab_personal_selector"
+            android:text="@string/index_personal" />
+
+    </RadioGroup>
+
+</RelativeLayout>

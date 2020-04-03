@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 默认分割线大小 -->
+    <dimen name="line_size">1px</dimen>
+    <!-- 默认按钮的圆角大小 -->
+    <dimen name="button_round_size">4dp</dimen>
+    <dimen name="button_round_0size">0dp</dimen>
+
+    <!-- 消息对话框圆角大小 -->
+    <dimen name="dialog_message_round_size">15dp</dimen>
+    <!-- 菜单对话框圆角大小 -->
+
+
+    <!-- 内边距的大小-->
+    <dimen name="padding_left">30dp</dimen>
+    <dimen name="padding_right">30dp</dimen>
+
+</resources>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginStart="15dp"
+    android:layout_marginEnd="15dp">
+    <!-- 规格-->
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="start"
+        android:text="规格"
+        android:textColor="@color/fontColor"
+        android:textSize="12sp" />
+
+    <!-- 单价-->
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="单价"
+        android:textColor="@color/fontColor"
+        android:textSize="12sp" />
+
+    <!-- 数量-->
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="数量"
+        android:textColor="@color/fontColor"
+        android:textSize="12sp" />
+
+    <!-- 合计-->
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="end"
+        android:text="合计"
+        android:textColor="@color/fontColor"
+        android:textSize="12sp" />
+
+</LinearLayout>
