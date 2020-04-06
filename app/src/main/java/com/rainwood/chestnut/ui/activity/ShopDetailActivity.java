@@ -18,11 +18,18 @@ import com.bumptech.glide.Glide;
 import com.rainwood.chestnut.R;
 import com.rainwood.chestnut.base.BaseActivity;
 import com.rainwood.chestnut.common.Contants;
-import com.rainwood.chestnut.domain.ParamsBean;
+import com.rainwood.chestnut.domain.GoodsDetailBean;
+import com.rainwood.chestnut.domain.ImageBean;
+import com.rainwood.chestnut.domain.ParamBean;
 import com.rainwood.chestnut.domain.ShopBean;
+import com.rainwood.chestnut.json.JsonParser;
+import com.rainwood.chestnut.okhttp.HttpResponse;
+import com.rainwood.chestnut.okhttp.OnHttpListener;
 import com.rainwood.chestnut.other.BaseDialog;
+import com.rainwood.chestnut.request.RequestPost;
 import com.rainwood.chestnut.ui.adapter.ShopDetailAdapter;
 import com.rainwood.chestnut.ui.dialog.MessageDialog;
+import com.rainwood.chestnut.utils.ListUtils;
 import com.rainwood.tools.common.FontDisplayUtil;
 import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.viewinject.ViewById;
@@ -32,13 +39,14 @@ import com.stx.xhb.xbanner.transformers.Transformer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: a797s
  * @Date: 2020/3/4 10:29
  * @Desc: 商品详情
  */
-public final class ShopDetailActivity extends BaseActivity implements View.OnClickListener {
+public final class ShopDetailActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
     @Override
     protected int getLayoutId() {
         return R.layout.activity_shop_detail;
@@ -66,6 +74,8 @@ public final class ShopDetailActivity extends BaseActivity implements View.OnCli
     private MeasureListView paramsList;
 
     private ShopBean mShop;
+    private List<ParamBean> mList;
+    private List<ImageBean> mImageList;
 
     // mHandler
     private final int INITIAL_SIZE = 0x101;
@@ -77,31 +87,18 @@ public final class ShopDetailActivity extends BaseActivity implements View.OnCli
         StatusBarUtil.setStatusBarColor(this, getResources().getColor(R.color.black));
         pageBack.setOnClickListener(this);
         pageCart.setOnClickListener(this);
-
-        name.setText("影儿诗篇网纱波点袖西装连衣裙");
-        num.setText("GD-002650");
-        minReserve.setText(Html.fromHtml("<font color=" + getResources().getColor(R.color.fontColor) + " size='"
-                + FontDisplayUtil.dip2px(ShopDetailActivity.this, 12f) + "'>最小起订量：</font>"
-                + "<font color=" + getResources().getColor(R.color.textColor) + " size='"
-                + FontDisplayUtil.dip2px(ShopDetailActivity.this, 12f) + "'><b>"
-                + "100" + "</b></font>"));
-        discountPrice.setText("90.5€");
-        // 如果有折扣价的时候，原价需要加上一横线
-        price.setText("168€");
         // 设置中划线并加清晰
         price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-        // XBanner
-        setXBanner();
-        Message msg = new Message();
-        msg.what = INITIAL_SIZE;
-        mHandler.sendMessage(msg);
     }
 
+    /**
+     * 显示轮播
+     */
     private void setXBanner() {
         // 初始化XBanner中展示的数据
-        final ArrayList<Integer> images = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            images.add(R.drawable.icon_loadding_fail);
+        final ArrayList<String> images = new ArrayList<>();
+        for (int i = 0; i < mImageList.size(); i++) {
+            images.add(mImageList.get(i).getIco());
         }
         if (mXBanner != null) {
             mXBanner.removeAllViews();
@@ -122,21 +119,17 @@ public final class ShopDetailActivity extends BaseActivity implements View.OnCli
         super.initData();
         mShop = new ShopBean();
         mShop.setMinReserve(String.valueOf(100));
-        mList = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            ParamsBean params = new ParamsBean();
-            params.setName("酒红色/S");
-            params.setPrice("90.5€");
-            params.setNumber("19");
-            mList.add(params);
-        }
+        // request
+        String goodsId = getIntent().getStringExtra("goodsId");
+        showLoading("");
+        RequestPost.getGoodsDetail(goodsId, this);
     }
 
     @Override
     public void onClick(View v) {
         int count = 0;
-        for (ParamsBean params : mList) {
-            count += Integer.parseInt(params.getNumber());
+        for (ParamBean params : mList) {
+            count += Integer.parseInt(params.getNum());
         }
         switch (v.getId()) {
             case R.id.iv_back:
@@ -169,8 +162,8 @@ public final class ShopDetailActivity extends BaseActivity implements View.OnCli
                 case INITIAL_SIZE:
                     // 设置已选数量
                     int selectedNum = 0;
-                    for (ParamsBean params : mList) {
-                        selectedNum += Integer.parseInt(params.getNumber());
+                    for (ParamBean params : mList) {
+                        selectedNum += Integer.parseInt(params.getNum());
                     }
                     // 已选择数量
                     selected.setText(Html.fromHtml("<font color=" + getResources().getColor(R.color.red30) + " size='"
@@ -197,7 +190,6 @@ public final class ShopDetailActivity extends BaseActivity implements View.OnCli
                             selected.setText(Html.fromHtml("<font color=" + getResources().getColor(R.color.red30) + " size='"
                                     + FontDisplayUtil.dip2px(ShopDetailActivity.this, 12f) + "'>已选"
                                     + adapter.sumCount() + "件</font>"));
-                            Log.d(TAG, "动态变化 --- " + mList.toString());
                         }
 
                     });
@@ -215,10 +207,10 @@ public final class ShopDetailActivity extends BaseActivity implements View.OnCli
      */
     private void setTextNumber(int position, int flag) {
         int number;
-        if ("".equals(mList.get(position).getNumber()) && TextUtils.isEmpty(mList.get(position).getNumber())) {
+        if ("".equals(mList.get(position).getNum()) && TextUtils.isEmpty(mList.get(position).getNum())) {
             number = 0;
         } else {
-            number = Integer.parseInt(mList.get(position).getNumber());
+            number = Integer.parseInt(mList.get(position).getNum());
         }
         if (flag == 1) {
             number += 1;
@@ -230,7 +222,7 @@ public final class ShopDetailActivity extends BaseActivity implements View.OnCli
             number = 0;
             toast("已经是可填写的最小数量");
         }
-        mList.get(position).setNumber(String.valueOf(number));
+        mList.get(position).setNum(String.valueOf(number));
         Message msg = new Message();
         msg.what = INITIAL_SIZE;
         mHandler.sendMessage(msg);
@@ -267,8 +259,66 @@ public final class ShopDetailActivity extends BaseActivity implements View.OnCli
                 }).show();
     }
 
-    /*
-    模拟数据
-     */
-    private List<ParamsBean> mList;
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Log.d(TAG, " ---- result ----- " + result);
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                // 商品详情页
+                if (result.url().contains("wxapi/v1/clientGoods.php?type=getGoodsInfo")) {
+                    // 规格
+                    mList = JsonParser.parseJSONArray(ParamBean.class, JsonParser.parseJSONObject(body.get("data")).get("skulist"));
+                    // 轮播图
+                    List<ImageBean> imageBeans = JsonParser.parseJSONArray(ImageBean.class, JsonParser.parseJSONObject(body.get("data")).get("icoAll"));
+                    GoodsDetailBean goodsDetail = JsonParser.parseJSONObject(GoodsDetailBean.class, JsonParser.parseJSONObject(body.get("data")).get("info"));
+                    mImageList = new ArrayList<>();
+                    ImageBean image = new ImageBean();
+                    if (goodsDetail != null) {
+                        image.setIco(goodsDetail.getIco());
+                    }
+                    mImageList.add(image);
+                    if (imageBeans != null) {
+                        for (int i = 0; i < ListUtils.getSize(imageBeans); i++) {
+                            ImageBean imageAll = new ImageBean();
+                            imageAll.setIco(imageBeans.get(i).getIco());
+                            mImageList.add(imageAll);
+                        }
+                    }
+                    // 显示轮播
+                    setXBanner();
+                    name.setText(goodsDetail.getName());
+                    num.setText(goodsDetail.getModel());
+                    minReserve.setText(Html.fromHtml("<font color=" + getResources().getColor(R.color.fontColor) + " size='"
+                            + FontDisplayUtil.dip2px(ShopDetailActivity.this, 12f) + "'>最小起订量：</font>"
+                            + "<font color=" + getResources().getColor(R.color.textColor) + " size='"
+                            + FontDisplayUtil.dip2px(ShopDetailActivity.this, 12f) + "'><b>"
+                            + goodsDetail.getStartNum() + "</b></font>"));
+                    if (goodsDetail.getMinPrice().equals(goodsDetail.getMaxPrice())){
+                        discountPrice.setText(goodsDetail.getMinPrice());
+                    }else {
+                        discountPrice.setText(goodsDetail.getMinPrice() + " - " +goodsDetail.getMaxPrice());
+                    }
+                    if (goodsDetail.getOldMinPrice().equals(goodsDetail.getOldMaxPrice())){
+                        price.setText(goodsDetail.getOldMinPrice());
+                    }else {
+                        price.setText(goodsDetail.getOldMinPrice() + " - " + goodsDetail.getMaxPrice());
+                    }
+                    // 规格
+                    Message msg = new Message();
+                    msg.what = INITIAL_SIZE;
+                    mHandler.sendMessage(msg);
+                }
+            } else {
+                toast(body.get("warn"));
+            }
+            dismissLoading();
+        }
+    }
 }

@@ -192,6 +192,8 @@ public final class OrderFragment extends BaseFragment implements View.OnClickLis
                             press.setChoose(false);
                         }
                         mTopTypeList.get(position).setChoose(true);
+                        // request
+
                     });
 
                     // content

@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.chestnut.R;
-import com.rainwood.chestnut.domain.ShopBean;
+import com.rainwood.chestnut.domain.GoodsBean;
 
 import java.util.List;
 
@@ -26,9 +26,9 @@ import java.util.List;
 public final class ShopAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<ShopBean> mList;
+    private List<GoodsBean> mList;
 
-    public ShopAdapter(Context context, List<ShopBean> list) {
+    public ShopAdapter(Context context, List<GoodsBean> list) {
         mContext = context;
         mList = list;
     }
@@ -39,7 +39,7 @@ public final class ShopAdapter extends BaseAdapter {
     }
 
     @Override
-    public ShopBean getItem(int position) {
+    public GoodsBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -61,12 +61,13 @@ public final class ShopAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        if (TextUtils.isEmpty(getItem(position).getImg())) {
+        if (TextUtils.isEmpty(getItem(position).getIco())) {
             Glide.with(convertView).load(R.drawable.icon_loadding_fail).into(holder.iv_img);
         } else {
-            Glide.with(convertView).load(getItem(position).getImg())
+            Glide.with(convertView).load(getItem(position).getIco())
                     .apply(RequestOptions.bitmapTransform(new RoundedCorners(4))
-                    .override(300, 300)).into(holder.iv_img);
+                            .error(R.drawable.icon_loadding_fail)
+                            .override(300, 300)).into(holder.iv_img);
         }
         holder.tv_name.setText(getItem(position).getName());
         // 点击事件
@@ -74,7 +75,7 @@ public final class ShopAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public interface OnClickItem{
+    public interface OnClickItem {
         void onClickItem(int position);
     }
 

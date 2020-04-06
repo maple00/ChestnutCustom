@@ -95,6 +95,7 @@ public final class CartFragment extends BaseFragment implements View.OnClickList
     @Override
     public void onResume() {
         super.onResume();
+        totalChoose = false;
         // request
         showLoading("");
         RequestPost.getCartlist("", this);
@@ -127,6 +128,7 @@ public final class CartFragment extends BaseFragment implements View.OnClickList
                 } else {
                     setChoose(R.drawable.shape_uncheck_shape, "全选", false);
                 }
+
                 Message msg = new Message();
                 msg.what = INITIAL_SIZE;
                 mHandler.sendMessage(msg);
@@ -184,7 +186,7 @@ public final class CartFragment extends BaseFragment implements View.OnClickList
      * @param isShow
      */
     private void setChoose(int res, String choose, boolean isShow) {
-        checked.setImageResource(res);
+        post(() -> checked.setImageResource(res));
         allChoose.setText(choose);
         for (CartBean cartBean : mList) {
             cartBean.setChecked(isShow);
@@ -243,8 +245,9 @@ public final class CartFragment extends BaseFragment implements View.OnClickList
                     double totalAmount = 0;
                     for (int i = 0; i < mList.size(); i++) {
                         for (int j = 0; j < mList.get(i).getSkulist().size(); j++) {
-                            totalAmount += Double.parseDouble(mList.get(i).getSkulist().get(j).getNum()) *
-                                    Double.parseDouble(mList.get(i).getSkulist().get(j).getPrice());
+                            if (mList.get(i).isChecked())
+                                totalAmount += Double.parseDouble(mList.get(i).getSkulist().get(j).getNum()) *
+                                        Double.parseDouble(mList.get(i).getSkulist().get(j).getPrice());
                         }
                     }
                     // 总计

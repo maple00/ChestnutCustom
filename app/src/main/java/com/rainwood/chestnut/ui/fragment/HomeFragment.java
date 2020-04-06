@@ -179,7 +179,9 @@ public final class HomeFragment extends BaseFragment implements View.OnClickList
                         contentList.setAdapter(merchantsAdapter);
                         merchantsAdapter.setOnClickItem(position -> {
                             // toast("查看商铺详情: " + position);
-                            startActivity(StoreDetailActivity.class);
+                            // request
+                            showLoading("");
+                            RequestPost.enterStoreDetail(mList.get(position).getStoreId(), HomeFragment.this);
                         });
                     } else {             // 当没有商家的时候
                         // 设置状态栏背景
@@ -259,6 +261,11 @@ public final class HomeFragment extends BaseFragment implements View.OnClickList
                     toast(body.get("warn"));
                     // 重新刷新页面
                     RequestPost.getStoreList("", this);
+                }
+                // 点击商家进入详情页面时
+                if (result.url().contains("wxapi/v1/clientGoods.php?type=enterStoreInfo")) {
+                    toast(body.get("warn"));
+                    postDelayed(() -> startActivity(StoreDetailActivity.class), 500);
                 }
             } else {
                 toast(body.get("warn"));

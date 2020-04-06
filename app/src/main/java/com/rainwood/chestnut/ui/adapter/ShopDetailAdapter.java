@@ -11,9 +11,12 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rainwood.chestnut.R;
+import com.rainwood.chestnut.domain.ParamBean;
 import com.rainwood.chestnut.domain.ParamsBean;
+import com.rainwood.tools.toast.ToastUtils;
 
 import java.util.List;
 
@@ -26,9 +29,9 @@ public final class ShopDetailAdapter extends BaseAdapter {
 
     private final int VALUE = 30000;
     private Context mContext;
-    private List<ParamsBean> mList;
+    private List<ParamBean> mList;
 
-    public ShopDetailAdapter(Context context, List<ParamsBean> list) {
+    public ShopDetailAdapter(Context context, List<ParamBean> list) {
         mContext = context;
         mList = list;
     }
@@ -39,7 +42,7 @@ public final class ShopDetailAdapter extends BaseAdapter {
     }
 
     @Override
-    public ParamsBean getItem(int position) {
+    public ParamBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -66,13 +69,12 @@ public final class ShopDetailAdapter extends BaseAdapter {
         holder.et_input.setTag(position + VALUE);
         holder.tv_name.setText(getItem(position).getName());
         holder.tv_price.setText(getItem(position).getPrice());
-        if (TextUtils.isEmpty(getItem(position).getNumber())
-                && Integer.parseInt(getItem(position).getNumber()) <= 0
-                && "".equals(getItem(position).getNumber())) {
+        if (TextUtils.isEmpty(getItem(position).getNum())
+                || Integer.parseInt(getItem(position).getNum()) <= 0) {
             holder.et_input.setText("0");
             holder.iv_reduce.setClickable(false);
         } else {
-            holder.et_input.setText(getItem(position).getNumber());
+            holder.et_input.setText(getItem(position).getNum());
         }
         // 点击事件
         holder.iv_reduce.setOnClickListener(v -> {
@@ -135,7 +137,7 @@ public final class ShopDetailAdapter extends BaseAdapter {
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             int tag = (int) holder.et_input.getTag();
             if (tag == position + VALUE) {
-                adapter.getItem(position).setNumber(s.toString());
+                adapter.getItem(position).setNum(s.toString());
             }
         }
 
@@ -154,10 +156,15 @@ public final class ShopDetailAdapter extends BaseAdapter {
      */
     public int sumCount() {
         int count = 0;
-        for (int i = 0; i < getCount(); i++) {
-            String number = getItem(i).getNumber();
-            number = number == null || number.length() == 0 ? "0" : number;
-            count += Integer.parseInt(number);
+        try {
+            for (int i = 0; i < getCount(); i++) {
+                String number = getItem(i).getNum();
+                number = number == null || number.length() == 0 ? "0" : number;
+                count += Integer.parseInt(number);
+            }
+        }catch (Exception e){
+            ToastUtils.show("请输入合理数量");
+            count = 0;
         }
         return count;
     }
@@ -171,7 +178,7 @@ public final class ShopDetailAdapter extends BaseAdapter {
         int price = 0;
         for (int i = 0; i < getCount(); i++) {
             String itemPrice = getItem(i).getPrice();
-            String itemNumber = getItem(i).getNumber();
+            String itemNumber = getItem(i).getNum();
             itemPrice = itemPrice == null || itemPrice.length() == 0 ? "0" : itemPrice;
             itemNumber = itemNumber == null || itemNumber.length() == 0 ? "0" : itemNumber;
             price += Integer.parseInt(itemPrice) * Integer.parseInt(itemNumber);

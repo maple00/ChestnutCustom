@@ -206,11 +206,11 @@ public final class SureOrderActivity extends BaseActivity implements View.OnClic
                             + "151010.5€" + "</b></font>"));
                     // 商品
                     Contants.RECORD_POS = 0x102;
-                    CartAdapter goodsAdapter = new CartAdapter(SureOrderActivity.this, mSureOrder.getGoodsList());
-                    goodsList.setAdapter(goodsAdapter);
+                    //CartAdapter goodsAdapter = new CartAdapter(SureOrderActivity.this, mSureOrder.getGoodsList());
+                    //goodsList.setAdapter(goodsAdapter);
                     // 汇总
-                    OrderSummaryAdapter summaryList = new OrderSummaryAdapter(SureOrderActivity.this, mSureOrder.getSummaryList());
-                    mSummaryList.setAdapter(summaryList);
+                   // OrderSummaryAdapter summaryList = new OrderSummaryAdapter(SureOrderActivity.this, mSureOrder.getSummaryList());
+                   // mSummaryList.setAdapter(summaryList);
                     break;
             }
         }

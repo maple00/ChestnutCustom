@@ -198,4 +198,48 @@ public final class RequestPost {
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URL + "wxapi/v1/clientGoods.php?type=getOrderInfo", params, listener);
     }
+
+    /**
+     * 点击商家进入到详情页面时
+     * @param id
+     * @param listener
+     */
+    public static void enterStoreDetail(String id, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("id", id);
+        OkHttp.post(Contants.ROOT_URL + "wxapi/v1/clientGoods.php?type=enterStoreInfo", params, listener);
+    }
+
+    /**
+     * 进入商家页面时获取的商家的信息
+     * @param type classify/分类，promotion/促销，new/新品
+     * @param listener
+     */
+    public static void getStoreInfo(String type, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("type", type);
+        OkHttp.post(Contants.ROOT_URL + "wxapi/v1/clientGoods.php?type=getGoodslist", params, listener);
+    }
+
+    /**
+     * 点击一级分类，获取二级分类
+     * @param id
+     * @param listener
+     */
+    public static void getClassify(String id, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("id", id);
+        OkHttp.post(Contants.ROOT_URL + "wxapi/v1/clientGoods.php?type=getClassify", params, listener);
+    }
+
+    /**
+     * 商品详情页
+     * @param id    商品id
+     * @param listener
+     */
+    public static void getGoodsDetail(String id, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("id", id);
+        OkHttp.post(Contants.ROOT_URL + "wxapi/v1/clientGoods.php?type=getGoodsInfo", params, listener);
+    }
 }

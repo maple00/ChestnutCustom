@@ -101,4 +101,7 @@ public final class HomeActivity extends BaseActivity {
                     .commitAllowingStateLoss();
         });
     }
+
+    // 再摁一次退出到桌面
+
 }

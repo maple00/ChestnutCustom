@@ -22,6 +22,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.rainwood.chestnut.R;
 import com.rainwood.chestnut.base.BaseActivity;
 import com.rainwood.chestnut.common.Contants;
+import com.rainwood.chestnut.domain.GoodsBean;
+import com.rainwood.chestnut.domain.NewShopsBean;
 import com.rainwood.chestnut.domain.PressBean;
 import com.rainwood.chestnut.domain.ShopBean;
 import com.rainwood.chestnut.ui.adapter.ShopAdapter;
@@ -77,8 +79,6 @@ public final class SecondaryActivity extends BaseActivity implements View.OnClic
     private final int POP_SHOP_SIZE = 0x103;
     private final int REFRESH_SIZE = 0x104;
 
-    private ShopBean mShop;
-
     @Override
     protected void initView() {
         pageBack.setOnClickListener(this);
@@ -100,26 +100,7 @@ public final class SecondaryActivity extends BaseActivity implements View.OnClic
     @Override
     protected void initData() {
         super.initData();
-        // 新品、促销
-        mShopList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            mShop = new ShopBean();
-            if (i % 3 == 0) {
-                mShop.setName("荔枝纹斜挎水桶包荔枝纹斜挎水桶包荔枝纹荔枝纹斜挎水桶包荔枝纹斜挎水桶包荔枝纹");
-            } else {
-                mShop.setName("荔枝纹斜挎挎枝纹");
-            }
-            mShop.setImg(null);
-            mShop.setNumber(String.valueOf(TestUtils.getRandonNum(1000, 0)));
-            mShop.setPrice("110€-149€");
-            mShop.setNum("GD-002561");
-            if (TestUtils.getRandonNum(100, 1) % 2 == 0) {
-                mShop.setLabel("1");
-            } else {
-                mShop.setLabel(null);
-            }
-            mShopList.add(mShop);
-        }
+
         // 分类
         newTypeList = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
@@ -132,8 +113,8 @@ public final class SecondaryActivity extends BaseActivity implements View.OnClic
         }
         mPopShopList = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
-            ShopBean shop = new ShopBean();
-            shop.setImg(null);
+            GoodsBean shop = new GoodsBean();
+            shop.setIco(null);
             shop.setName("针织开衫针织");
             mPopShopList.add(shop);
         }
@@ -205,7 +186,6 @@ public final class SecondaryActivity extends BaseActivity implements View.OnClic
                     //上拉加载
                     mRefreshLayout.setOnLoadMoreListener(() -> {
                         Log.i(TAG, "load start");
-                        mShopList.add(mShop);
                         postDelayed(() -> {
                             Log.i(TAG, "response ok");
                             Message msgContent = new Message();
@@ -217,7 +197,6 @@ public final class SecondaryActivity extends BaseActivity implements View.OnClic
                     // 下拉刷新
                     mRefreshLayout.setOnRefreshListener(() -> {
                         Log.i(TAG, "refresh start");
-                        mShopList.add(mShop);
                         postDelayed(() -> {
                             Log.i(TAG, "response ok");
                             Message msgContent = new Message();
@@ -247,7 +226,7 @@ public final class SecondaryActivity extends BaseActivity implements View.OnClic
                         }
                         newTypeList.get(position).setChoose(true);
                         //数据
-                        for (ShopBean shopBean : mPopShopList) {
+                        for (GoodsBean shopBean : mPopShopList) {
                             shopBean.setName(newTypeList.get(position).getName() + "/" + position);
                         }
                         Message shopMsg = new Message();
@@ -257,7 +236,7 @@ public final class SecondaryActivity extends BaseActivity implements View.OnClic
                     // 默认选择第一项
                     if (newTypeList.get(0).isChoose()) {
                         //数据
-                        for (ShopBean shopBean : mPopShopList) {
+                        for (GoodsBean shopBean : mPopShopList) {
                             shopBean.setName(newTypeList.get(0).getName() + "/0");
                         }
                         Message shopMsg = new Message();
@@ -280,8 +259,8 @@ public final class SecondaryActivity extends BaseActivity implements View.OnClic
     };
 
     // 商品
-    private List<ShopBean> mShopList;
+    private List<NewShopsBean> mShopList;
     // 分类
     private List<PressBean> newTypeList;
-    private List<ShopBean> mPopShopList;
+    private List<GoodsBean> mPopShopList;
 }

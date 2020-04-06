@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="wrap_content"
     android:background="@mipmap/img_background_2x"
     android:paddingTop="40dp">
 
@@ -119,6 +119,7 @@
             <ImageView
                 android:layout_width="14dp"
                 android:layout_height="10dp"
+                android:scaleType="fitXY"
                 android:src="@drawable/ic_number" />
 
             <TextView
@@ -137,6 +138,7 @@
             <ImageView
                 android:layout_width="8dp"
                 android:layout_height="11dp"
+                android:scaleType="fitXY"
                 android:src="@drawable/ic_phone" />
 
             <TextView
