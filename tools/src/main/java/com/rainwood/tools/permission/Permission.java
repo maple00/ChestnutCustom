@@ -10,6 +10,8 @@ public class Permission {
     /** 8.0及以上应用安装权限 */
     public static final String REQUEST_INSTALL_PACKAGES = "android.permission.REQUEST_INSTALL_PACKAGES";
 
+    public static final String DOWNLOAD_ACCESS = "android.permission.ACCESS_ALL_DOWNLOADS";
+
     /** 6.0及以上悬浮窗权限 */
     public static final String SYSTEM_ALERT_WINDOW = "android.permission.SYSTEM_ALERT_WINDOW";
 

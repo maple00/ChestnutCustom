@@ -84,9 +84,22 @@ public final class HomeFragment extends BaseFragment implements View.OnClickList
     @Override
     public void onResume() {
         super.onResume();
-        // request
-        showLoading("loading");
-        RequestPost.getStoreList("", this);
+        // 上拉加载
+        mRefreshLayout.setOnLoadMoreListener(() -> {
+            Log.i(TAG, "load start");
+            RequestPost.getStoreList("", this);
+        });
+        // 下拉刷新
+        mRefreshLayout.setOnRefreshListener(() -> {
+            Log.i(TAG, "refresh start");
+            RequestPost.getStoreList("", this);
+        });
+        // 第一次进来的时候刷新
+        mRefreshLayout.setOnAutoLoadListener(() -> {
+            Log.i(TAG, " --- 开始加载数据了");
+            RequestPost.getStoreList("", this);
+        });
+        mRefreshLayout.autoRefresh();
     }
 
     @Override
@@ -106,8 +119,8 @@ public final class HomeFragment extends BaseFragment implements View.OnClickList
                 mPopupWindow.setContentView(view);
                 // 获取商家口令
                 TextView obtainPwd = view.findViewById(R.id.tv_obtain_pwd);
+                EditText etNumber = view.findViewById(R.id.et_number);
                 obtainPwd.setOnClickListener(v13 -> {
-                    EditText etNumber = view.findViewById(R.id.et_number);
                     if (TextUtils.isEmpty(etNumber.getText())) {
                         toast("请输入商家编号");
                         return;
@@ -130,10 +143,9 @@ public final class HomeFragment extends BaseFragment implements View.OnClickList
                         toast("请输入口令");
                         return;
                     }
-                    mPopupWindow.dismiss();
                     // request
                     showLoading("loading");
-                    RequestPost.joinStore(obtainPwd.getText().toString().trim(),
+                    RequestPost.joinStore(etNumber.getText().toString().trim(),
                             cet_pwd.getText().toString().trim(), HomeFragment.this);
                 });
                 ImageView dismiss = view.findViewById(R.id.iv_dismiss);
@@ -171,6 +183,8 @@ public final class HomeFragment extends BaseFragment implements View.OnClickList
             super.handleMessage(msg);
             switch (msg.what) {
                 case INITIAL_SIZE:
+                    mRefreshLayout.setLoadMore(false);
+                    mRefreshLayout.setRefreshing(false);
                     if (mList != null && mList.size() != 0) {            // 当有商家的时候
                         StatusBarUtil.setStatusBarDarkTheme(getActivity(), true);
                         merchants.setVisibility(View.VISIBLE);
@@ -192,10 +206,9 @@ public final class HomeFragment extends BaseFragment implements View.OnClickList
                     }
                     break;
                 case REFRESH_SIZE:
-                    // 上拉加载
-                    /*mRefreshLayout.setOnLoadMoreListener(() -> {
+                  /*  // 上拉加载
+                    mRefreshLayout.setOnLoadMoreListener(() -> {
                         Log.i(TAG, "load start");
-                        mList.add(merchant);
                         postDelayed(() -> {
                             Log.i(TAG, "response ok");
                             Message msgContent = new Message();
@@ -207,7 +220,6 @@ public final class HomeFragment extends BaseFragment implements View.OnClickList
                     // 下拉刷新
                     mRefreshLayout.setOnRefreshListener(() -> {
                         Log.i(TAG, "refresh start");
-                        mList.add(merchant);
                         postDelayed(() -> {
                             Log.i(TAG, "response ok");
                             Message msgContent = new Message();
@@ -253,11 +265,11 @@ public final class HomeFragment extends BaseFragment implements View.OnClickList
                 }
                 // 获取商家口令
                 if (result.url().contains("wxapi/v1/clientGoods.php?type=getStoreCode")) {
-                    Log.d(TAG, "口令 ======== " + body.get("data"));
                     toast(body.get("warn"));
                 }
                 // 添加商家
                 if (result.url().contains("wxapi/v1/clientGoods.php?type=joinStore")) {
+                    mPopupWindow.dismiss();
                     toast(body.get("warn"));
                     // 重新刷新页面
                     RequestPost.getStoreList("", this);
@@ -270,7 +282,8 @@ public final class HomeFragment extends BaseFragment implements View.OnClickList
             } else {
                 toast(body.get("warn"));
             }
-            dismissLoading();
+            if (getDialog() != null)
+                dismissLoading();
         }
     }
 }

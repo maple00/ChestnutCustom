@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">板栗门店</string>
 
+    <string name="common_copyright">\u00a9 2019 All Rights Reserved</string>
     <!-- 通用-->
     <string name="common_code_send" translatable="false">发送验证码</string>
     <string name="common_input_code" translatable="false">输入验证码</string>
@@ -8,33 +9,26 @@
     <string name="common_step_commit" translatable="false">提交</string>
     <string name="common_confirm" translatable="false">确定</string>
     <string name="common_cancel" translatable="false">取消</string>
-    <string name="common_reset" translatable="false">重置</string>
-    <string name="common_percent" translatable="false">%</string>
     <string name="common_year" translatable="false">年</string>
     <string name="common_month" translatable="false">月</string>
     <string name="common_day" translatable="false">日</string>
     <string name="common_save" translatable="false">保存</string>
-    <string name="common_choose" translatable="false">请选择</string>
     <string name="common_input" translatable="false">请输入</string>
-    <string name="common_check_all" translatable="false">查看全部</string>
-    <string name="common_clear_screening" translatable="false">清空筛选</string>
     <string name="common_delete" translatable="false">删除</string>
     <string name="common_edit" translatable="false">编辑</string>
     <string name="common_default_address" translatable="false">默认地址</string>
     <string name="common_default" translatable="false">默认</string>
-    <string name="common_disable" translatable="false">停用</string>
     <string name="common_logout">退出登录</string>
     <string name="common_exit">退出</string>
     <string name="common_input_phone" translatable="false">请输入手机号</string>
     <string name="common_get_check_code" translatable="false">获取验证码</string>
     <string name="common_next_step">下一步</string>
+    <string name="common_permission_hint">请先授予权限</string>
+    <string name="common_permission_fail">授权失败，请手动授予权限</string>
     <string name="common_search">搜索</string>
     <!-- Http-->
     <string name="frame_name">AndroidOHP</string>
     <!-- 提示-->
-    <string name="hint_layout_no_data" translatable="false">亲，暂无数据</string>
-    <string name="hint_layout_error_request" translatable="false">亲，请求出错了</string>
-    <string name="hint_layout_error_network" translatable="false">亲，没有网络了</string>
     <!-- 本地异常捕捉-->
     <string name="crash_error_hint" translatable="false">发生意外错误\n抱歉，给您带来不便</string>
     <string name="crash_error_restart" translatable="false">重新启动</string>
@@ -93,7 +87,6 @@
     <string name="search_obtain_pwd">获取口令</string>
     <string name="search_pwd">口令</string>
     <string name="search_confirm_add">确认添加</string>
-    <string name="cart_all_choose">全选</string>
     <string name="cart_settles_account">去结算</string>
     <string name="order_present_method">配送方式</string>
     <string name="order_express_text">快递</string>
@@ -107,9 +100,17 @@
     <string name="dialog_keep_add">继续添加</string>
     <string name="dialog_give_up">我不要了</string>
     <string name="store_history_order">历史订购</string>
+    <string name="order_detail_refunds">退货</string>
 
     <string name="search_history">历史搜索</string>
     <string name="search_clear">清空</string>
     <string name="search_history_record">历史记录</string>
+
+<!--    新增收货地址-->
+    <string name="address_company">公司</string>
+    <string name="address_contact">收件人</string>
+    <string name="address_tel">联系电话</string>
+    <string name="address_region">国家/地区</string>
+    <string name="address_address">详细地址</string>
 
 </resources>

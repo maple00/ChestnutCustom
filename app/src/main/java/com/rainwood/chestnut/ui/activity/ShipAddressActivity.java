@@ -1,7 +1,6 @@
 package com.rainwood.chestnut.ui.activity;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -27,6 +26,8 @@ import com.rainwood.tools.widget.MeasureListView;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.rainwood.chestnut.common.Contants.ADDRESS_REQUEST;
 
 /**
  * @Author: shearson
@@ -58,8 +59,6 @@ public final class ShipAddressActivity extends BaseActivity implements View.OnCl
         pageBack.setOnClickListener(this);
         newAddress.setOnClickListener(this);
         pageTitle.setText("收货地址");
-
-
     }
 
     @Override
@@ -120,6 +119,24 @@ public final class ShipAddressActivity extends BaseActivity implements View.OnCl
                             // request
                             showLoading("loading");
                             RequestPost.delAddress(mList.get(position).getId(), ShipAddressActivity.this);
+                        }
+
+                        @Override
+                        public void onClickItem(int position) {
+                            if (Contants.ADDRESS_POS_SIZE == 0x101) {           // 购物车选择收货地址
+                                Intent intent = new Intent();
+                                intent.putExtra("addressId", mList.get(position).getId());
+                                intent.putExtra("address", mList.get(position).getAddressMx());
+                                intent.putExtra("contact", mList.get(position).getContactName());
+                                intent.putExtra("tel", mList.get(position).getContactTel());
+                                setResult(ADDRESS_REQUEST, intent);
+                                finish();
+                            } else {
+                                Contants.RECORD_POS = 0x104;
+                                Intent intent = new Intent(ShipAddressActivity.this, ShipNewAddressActivity.class);
+                                intent.putExtra("addressId", mList.get(position).getId());
+                                startActivity(intent);
+                            }
                         }
                     });
                     break;

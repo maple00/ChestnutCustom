@@ -92,7 +92,7 @@ public final class NewAddressAdapter extends BaseAdapter {
             notifyDataSetChanged();
         });
         // 编辑地址
-        holder.ll_set_default.setOnClickListener(v -> onClickContent.editAddress(position));
+        holder.ll_set_default.setOnClickListener(v -> onClickContent.onClickItem(position));
         holder.iv_edit.setOnClickListener(v -> onClickContent.editAddress(position));
         holder.tv_edit.setOnClickListener(v -> onClickContent.editAddress(position));
         // 删除地址
@@ -116,6 +116,8 @@ public final class NewAddressAdapter extends BaseAdapter {
 
         // 删除地址
         void deleteAddress(int position);
+        // 点击地址
+        void onClickItem(int position);
     }
 
     private OnClickContent onClickContent;

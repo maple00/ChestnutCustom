@@ -154,14 +154,126 @@
 
             </LinearLayout>
 
-            <!-- 购买的商品 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:background="@drawable/shape_white_5"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/iv_checked"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/shape_uncheck_shape"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/iv_img"
+                    android:layout_width="77dp"
+                    android:layout_height="77dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/icon_loadding_fail" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:lineSpacingExtra="12dp"
+                        android:maxLines="2"
+                        android:textColor="@color/textColor"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tv_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/fontColor"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="13dp"
+                    android:src="@drawable/ic_right_arrow" />
+
+            </LinearLayout>
+
+            <View
+                style="@style/HorizontalLineStyle"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="15dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:background="@drawable/shape_white_5">
+
+                <TextView
+                    android:id="@+id/tv_special"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="规格"
+                    android:textColor="@color/fontColor"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_price"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="单价"
+                    android:textColor="@color/fontColor"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_num"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="数量"
+                    android:textColor="@color/fontColor"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_total"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="合计"
+                    android:textColor="@color/fontColor"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- 商品的规格 -->
             <com.rainwood.tools.widget.MeasureListView
                 android:id="@+id/mlv_goods_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
+                android:background="@drawable/shape_white_5"
                 android:divider="@color/transparent"
                 android:dividerHeight="20dp" />
 

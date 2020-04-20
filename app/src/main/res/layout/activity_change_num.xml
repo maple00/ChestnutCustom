@@ -30,7 +30,7 @@
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:hint="@string/common_input_phone"
-        android:inputType="textVisiblePassword"
+        android:inputType="phone"
         android:singleLine="true"
         app:regexType="mobile" />
 

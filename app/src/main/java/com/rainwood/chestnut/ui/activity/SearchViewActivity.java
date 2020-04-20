@@ -1,6 +1,8 @@
 package com.rainwood.chestnut.ui.activity;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -13,9 +15,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.chestnut.R;
 import com.rainwood.chestnut.base.BaseActivity;
+import com.rainwood.chestnut.common.Contants;
 import com.rainwood.chestnut.helper.DbDao;
 import com.rainwood.chestnut.ui.adapter.SeachRecordAdapter;
 import com.rainwood.tools.viewinject.ViewById;
+
+import static com.rainwood.chestnut.common.Contants.ORDER_REQUEST_SIZE;
 
 /**
  * @Author: a797s
@@ -23,7 +28,6 @@ import com.rainwood.tools.viewinject.ViewById;
  * @Desc: 含历史记录的搜索框
  */
 public final class SearchViewActivity extends BaseActivity implements View.OnClickListener {
-
 
     @Override
     protected int getLayoutId() {
@@ -93,12 +97,18 @@ public final class SearchViewActivity extends BaseActivity implements View.OnCli
                     if (!hasData) {
                         mDbDao.insertData(met_search.getText().toString().trim());
                     } else {
-                        toast("该内容已在历史记录中");
+                        Log.d(TAG, "该内容已在历史记录中");
                     }
                     mAdapter.updata(mDbDao.queryData(""));
-                    /*
-                    去查询的地方
-                     */
+                    // TODO: return
+                    Intent intent = new Intent();
+                    intent.putExtra("searchKeyWord", met_search.getText().toString().trim());
+                    // 订单列表搜索
+                    if (Contants.RECORD_POS == 0x107){
+                        setResult(ORDER_REQUEST_SIZE, intent);
+                    }
+
+                    finish();
                 } else {
                     toast("请输入内容");
                 }

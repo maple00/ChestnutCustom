@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rainwood.chestnut.R;
+import com.rainwood.chestnut.domain.GoodsParentBean;
 import com.rainwood.chestnut.domain.PressBean;
 
 import java.util.List;
@@ -22,9 +23,9 @@ import java.util.List;
 public final class TypeListAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<PressBean> mList;
+    private List<GoodsParentBean> mList;
 
-    public TypeListAdapter(Context context, List<PressBean> list) {
+    public TypeListAdapter(Context context, List<GoodsParentBean> list) {
         mContext = context;
         mList = list;
     }
@@ -36,7 +37,7 @@ public final class TypeListAdapter extends BaseAdapter {
     }
 
     @Override
-    public PressBean getItem(int position) {
+    public GoodsParentBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -57,8 +58,8 @@ public final class TypeListAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.tv_type.setText(getItem(position).getName());
-        if (getItem(position).isChoose()) {
+        holder.tv_type.setText(getItem(position).getGoodsTypeOne());
+        if (getItem(position).isSelected()) {
             holder.tv_type.setTextColor(mContext.getResources().getColor(R.color.white));
             holder.tv_type.setBackground(mContext.getResources().getDrawable(R.drawable.shape_radius_red_full_14));
             holder.tv_type.setPadding(20, 10, 20, 10);

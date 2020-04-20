@@ -1,6 +1,7 @@
 package com.rainwood.chestnut.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -11,22 +12,23 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.rainwood.chestnut.R;
 import com.rainwood.chestnut.base.BaseActivity;
 import com.rainwood.chestnut.common.Contants;
-import com.rainwood.chestnut.domain.OrderBean;
 import com.rainwood.chestnut.domain.OrderDetailBean;
-import com.rainwood.chestnut.domain.OrderSpecialBean;
 import com.rainwood.chestnut.domain.SpecialBean;
 import com.rainwood.chestnut.domain.TitleAndHintBean;
 import com.rainwood.chestnut.json.JsonParser;
 import com.rainwood.chestnut.okhttp.HttpResponse;
 import com.rainwood.chestnut.okhttp.OnHttpListener;
 import com.rainwood.chestnut.request.RequestPost;
-import com.rainwood.chestnut.ui.adapter.ItemCartAdapter;
+import com.rainwood.chestnut.ui.adapter.CompleteOrderAdapter;
 import com.rainwood.chestnut.ui.adapter.OrderSummaryAdapter;
+import com.rainwood.chestnut.ui.adapter.SureOrderSpecialAdapter;
+import com.rainwood.chestnut.utils.PhoneCallUtils;
 import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.viewinject.ViewById;
 import com.rainwood.tools.widget.MeasureListView;
@@ -35,12 +37,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.rainwood.chestnut.common.Contants.REFUNDS_APPLYING;
+import static com.rainwood.chestnut.common.Contants.REFUNDS_REQUEST;
+
 /**
  * @Author: a797s
  * @Date: 2020/3/4 15:45
  * @Desc: 订单详情
  */
 public final class OrderDetailActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
+
+    private List<SpecialBean> mSepcialList;
+    private OrderDetailBean mOrderDetail;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_order_detail;
@@ -81,20 +90,18 @@ public final class OrderDetailActivity extends BaseActivity implements View.OnCl
     @ViewById(R.id.btn_confirm)
     private Button btnConfirm;
 
-    private OrderBean mOrder;
+    @ViewById(R.id.ll_item_top)
+    private LinearLayout itemTop;
     // mHandler
     private final int INITIAL_SIZE = 0x101;
-    private String[] titles = {"商品总价", "运费", "折扣", "实付款"};
-    private String[] orderTitles = {"订单编号", "创建时间", "发货时间"};
-    private String[] orderLabel = {"1545210005300", "2020.02.07 15:17:00", "2020.02.07"};
+    private String[] titles = {"商品总价", "折扣", "实付款", "运费"};
+    private String[] orderTitles = {"订单编号", "创建时间"};
+    private List<TitleAndHintBean> mountList;
+    private List<TitleAndHintBean> mOrderAttachList;
 
     @Override
     protected void initView() {
         initContent();
-
-        Message msg = new Message();
-        msg.what = INITIAL_SIZE;
-        mHandler.sendMessage(msg);
     }
 
     @Override
@@ -107,7 +114,7 @@ public final class OrderDetailActivity extends BaseActivity implements View.OnCl
     }
 
     /**
-     * 初始化
+     * initial
      */
     private void initContent() {
         StatusBarUtil.setRootViewFitsSystemWindows(this, false);
@@ -127,11 +134,11 @@ public final class OrderDetailActivity extends BaseActivity implements View.OnCl
                 finish();
                 break;
             case R.id.ll_service_phone:
-                toast("拨打电话");
+                // toast("拨打电话");
+                PhoneCallUtils.callPhoneDump(this, mOrderDetail.getTel());
                 break;
             case R.id.btn_confirm:
                 // toast("确定了");
-                mOrder.setStatus("已完成");
                 Message msg = new Message();
                 msg.what = INITIAL_SIZE;
                 mHandler.sendMessage(msg);
@@ -142,42 +149,6 @@ public final class OrderDetailActivity extends BaseActivity implements View.OnCl
     @Override
     protected void initData() {
         super.initData();
-        mOrder = new OrderBean();
-        mOrder.setStatus("待收货");
-        mOrder.setAddress("重庆市南岸区弹子石国际商务大厦A座22-2");
-        mOrder.setCompany("衣香丽影服饰有限公司");
-        mOrder.setConsignee("李亚琪");
-        mOrder.setTel("13512270415");
-        mOrder.setName("预售影儿诗篇女装新款双排扣网纱波点袖修身西装西装连衣裙装西");
-        mOrder.setShopId("GD-002650");
-        mOrder.setDiscount("25%折扣");
-        mOrder.setRate("16%税率");
-        List<SpecialBean> specialList = new ArrayList<>();
-        for (int j = 0; j < 5; j++) {
-            SpecialBean special = new SpecialBean();
-            special.setSkuName("酒红色/M");
-            special.setPrice("90");
-            special.setNum("200");
-            special.setTotalMoney("18100€");
-            specialList.add(special);
-        }
-        mOrder.setSpecialList(specialList);
-        List<TitleAndHintBean> summaryList = new ArrayList<>();
-        for (int i = 0; i < titles.length; i++) {
-            TitleAndHintBean summary = new TitleAndHintBean();
-            summary.setTitle(titles[i]);
-            summary.setLabel("50€");
-            summaryList.add(summary);
-        }
-        mOrder.setSummaryList(summaryList);
-        List<TitleAndHintBean> orderInfoList = new ArrayList<>();
-        for (int i = 0; i < orderTitles.length; i++) {
-            TitleAndHintBean titleAndHint = new TitleAndHintBean();
-            titleAndHint.setTitle(orderTitles[i]);
-            titleAndHint.setLabel(orderLabel[i]);
-            orderInfoList.add(titleAndHint);
-        }
-        mOrder.setOrderInfoList(orderInfoList);
     }
 
     @SuppressLint("HandlerLeak")
@@ -188,45 +159,47 @@ public final class OrderDetailActivity extends BaseActivity implements View.OnCl
             super.handleMessage(msg);
             switch (msg.what) {
                 case INITIAL_SIZE:
-                    status.setText(mOrder.getStatus());
-                    if (mOrder.getStatus().equals("待收货")) {
-                        post(() -> confirm.setVisibility(View.VISIBLE));
+                    status.setText(mOrderDetail.getWorkFlow());
+                    // post(() -> confirm.setVisibility(View.GONE));
+                    if (mOrderDetail.getWorkFlow().equals("已完成")) {     // 已完成状态可以选择退货
+                        itemTop.setVisibility(View.GONE);
+                        CompleteOrderAdapter orderAdapter = new CompleteOrderAdapter(OrderDetailActivity.this, mSepcialList);
+                        paramsList.setAdapter(orderAdapter);
+                        orderAdapter.setOnClickRefunds(position -> {
+                            if ("".equals(mSepcialList.get(position).getRefundState())) {         // 去退货
+                                Contants.GOODS_REFUNDS_SIZE = 0x101;
+                                Intent intent = new Intent(OrderDetailActivity.this, RefundsActivity.class);
+                                intent.putExtra("orderId", mSepcialList.get(position).getId());
+                                startActivityForResult(intent, REFUNDS_REQUEST);
+                            }
+                            if ("applying".equals(mSepcialList.get(position).getRefundState())) { // 申请中
+                                Contants.GOODS_REFUNDS_SIZE = 0x102;
+                                Intent intent = new Intent(OrderDetailActivity.this, RefundsActivity.class);
+                                intent.putExtra("orderId", mSepcialList.get(position).getId());
+                                startActivityForResult(intent, REFUNDS_APPLYING);
+                            }
+                        });
                     } else {
-                        post(() -> confirm.setVisibility(View.GONE));
+                        itemTop.setVisibility(View.VISIBLE);
+                        // 规格参数         -- 参数的Adapter
+                        Contants.RECORD_POS = 0x103;
+                        SureOrderSpecialAdapter specialAdapter = new SureOrderSpecialAdapter(OrderDetailActivity.this, mSepcialList);
+                        paramsList.setAdapter(specialAdapter);
                     }
-                    address.setText(mOrder.getAddress());
-                    company.setText(mOrder.getCompany());
-                    nameAndTel.setText(mOrder.getConsignee() + "\t" + mOrder.getTel());
-                    Glide.with(OrderDetailActivity.this).load(R.drawable.icon_loadding_fail).into(img);
-                    name.setText(mOrder.getName());
-                    number.setText(mOrder.getShopId());
-                    discount.setText(mOrder.getDiscount());
-                    rate.setText(mOrder.getRate());
-                    // 规格参数         -- 参数的Adapter写错了
-                    Contants.RECORD_POS = 0x103;
-                    ItemCartAdapter specialAdapter = new ItemCartAdapter(OrderDetailActivity.this, mOrder.getSpecialList());
-                    paramsList.setAdapter(specialAdapter);
-                    specialAdapter.setOnClickReducePlus(new ItemCartAdapter.OnClickReducePlus() {
-                        @Override
-                        public void onClickPlus(int parentPos, int position) {
+                    address.setText(mOrderDetail.getAddressMx());
+                    company.setText(mOrderDetail.getCompanyName());
+                    nameAndTel.setText(mOrderDetail.getContactName() + "\t" + mOrderDetail.getContactTel());
+                    Glide.with(OrderDetailActivity.this).load(mOrderDetail.getIco()).into(img);
+                    name.setText(mOrderDetail.getGoodsName());
+                    number.setText(mOrderDetail.getModel());
+                    discount.setText(mOrderDetail.getDiscountMoney() + "%");
+                    rate.setText(mOrderDetail.getTaxRate() + "%");
 
-                        }
-
-                        @Override
-                        public void onClickReduce(int parentPos, int position) {
-
-                        }
-
-                        @Override
-                        public void onWatcherEdit(ItemCartAdapter adapter, int parentPos, int position) {
-
-                        }
-                    });
                     // 汇总
-                    OrderSummaryAdapter summaryAdapter = new OrderSummaryAdapter(OrderDetailActivity.this, mOrder.getSummaryList());
+                    OrderSummaryAdapter summaryAdapter = new OrderSummaryAdapter(OrderDetailActivity.this, mountList);
                     summaryLists.setAdapter(summaryAdapter);
                     // 订单信息
-                    OrderSummaryAdapter orderInfoAdapter = new OrderSummaryAdapter(OrderDetailActivity.this, mOrder.getOrderInfoList());
+                    OrderSummaryAdapter orderInfoAdapter = new OrderSummaryAdapter(OrderDetailActivity.this, mOrderAttachList);
                     orderMsgList.setAdapter(orderInfoAdapter);
                     // NestedScrollView  的滑动监听
                     break;
@@ -247,11 +220,49 @@ public final class OrderDetailActivity extends BaseActivity implements View.OnCl
             if ("1".equals(body.get("code"))) {
                 // 查看订单详情
                 if (result.url().contains("wxapi/v1/clientGoods.php?type=getOrderInfo")) {
-                    OrderDetailBean orderDetail = JsonParser.parseJSONObject(OrderDetailBean.class,
+                    mOrderDetail = JsonParser.parseJSONObject(OrderDetailBean.class,
                             JsonParser.parseJSONObject(body.get("data")).get("info"));
-                    List<OrderSpecialBean> sepcialList = JsonParser.parseJSONArray(OrderSpecialBean.class,
+                    mSepcialList = JsonParser.parseJSONArray(SpecialBean.class,
                             JsonParser.parseJSONObject(body.get("data")).get("skulist"));
 
+                    mountList = new ArrayList<>();
+                    for (int i = 0; i < titles.length; i++) {
+                        TitleAndHintBean hint = new TitleAndHintBean();
+                        hint.setTitle(titles[i]);
+                        switch (i) {
+                            case 0:         // 商品总价
+                                hint.setLabel(mOrderDetail.getTotalMoney());
+                                break;
+                            case 1:         // 折扣价
+                                hint.setLabel(mOrderDetail.getDiscountMoney());
+                                break;
+                            case 2:         // 实际付款
+                                hint.setLabel(mOrderDetail.getRealPayMoney());
+                                break;
+                            case 3:         // 运费
+                                hint.setLabel(mOrderDetail.getFreightMoney());
+                                break;
+                        }
+                        mountList.add(hint);
+                    }
+                    mOrderAttachList = new ArrayList<>();
+                    for (int i = 0; i < orderTitles.length; i++) {
+                        TitleAndHintBean hint = new TitleAndHintBean();
+                        hint.setTitle(orderTitles[i]);
+                        switch (i) {
+                            case 0:         // 订单编号
+                                hint.setLabel(mOrderDetail.getId());
+                                break;
+                            case 1:         // 创建时间
+                                hint.setLabel(mOrderDetail.getTime());
+                                break;
+                        }
+                        mOrderAttachList.add(hint);
+                    }
+
+                    Message msg = new Message();
+                    msg.what = INITIAL_SIZE;
+                    mHandler.sendMessage(msg);
                 }
             } else {
                 toast(body.get("warn"));

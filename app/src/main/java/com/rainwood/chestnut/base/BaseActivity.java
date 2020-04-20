@@ -174,19 +174,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         return HANDLER.postAtTime(r, mHandlerToken, uptimeMillis);
     }
 
-    @Override
-    protected void onDestroy() {
-        ActivityStackManager.getInstance().removeActivity(this);
-        super.onDestroy();
-        if (mDialog != null) {
-            mDialog.dismissDialog();
-        }
-    }
-
-    public ViewGroup getContentView() {
-        return findViewById(Window.ID_ANDROID_CONTENT);
-    }
-
     /**
      * 软键盘聚焦
      */
@@ -220,6 +207,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        ActivityStackManager.getInstance().removeActivity(this);
+        super.onDestroy();
+        if (mDialog != null) {
+            mDialog.dismissDialog();
+        }
+    }
     /**
      * 隐藏软键盘
      */

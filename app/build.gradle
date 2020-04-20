@@ -16,6 +16,16 @@ android {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
+
+    // 生成指定的apk文件名，默认为app-release.spk
+    android.applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+                // 此处指定生成的apk文件名
+                outputFileName = "板栗门店.apk"
+            }
+    }
+
     buildTypes {
         release {
             minifyEnabled false

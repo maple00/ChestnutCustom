@@ -174,10 +174,11 @@
                     android:layout_marginTop="15dp"
                     android:layout_marginBottom="15dp" />
 
-                <include layout="@layout/sub_special_top"
-                    android:layout_marginBottom="15dp"
+                <include
+                    layout="@layout/sub_special_top"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp" />
 
                 <com.rainwood.tools.widget.MeasureListView
                     android:id="@+id/lv_params_list"
@@ -199,6 +200,8 @@
                 android:background="@drawable/shape_white_5"
                 android:divider="@color/transparent"
                 android:dividerHeight="30dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
                 android:scrollbars="none" />
 
             <com.rainwood.tools.widget.MeasureListView
@@ -206,10 +209,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10sp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="10sp"
                 android:background="@drawable/shape_white_5"
                 android:divider="@color/transparent"
                 android:dividerHeight="25dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
                 android:scrollbars="none" />
 
             <LinearLayout

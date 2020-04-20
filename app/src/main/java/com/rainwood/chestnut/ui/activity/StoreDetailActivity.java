@@ -25,7 +25,6 @@ import com.rainwood.chestnut.domain.GoodsParentBean;
 import com.rainwood.chestnut.domain.NewShopsBean;
 import com.rainwood.chestnut.domain.PressBean;
 import com.rainwood.chestnut.domain.PromotionGoodsBean;
-import com.rainwood.chestnut.domain.ShopBean;
 import com.rainwood.chestnut.domain.StoresBean;
 import com.rainwood.chestnut.json.JsonParser;
 import com.rainwood.chestnut.okhttp.HttpResponse;
@@ -96,7 +95,7 @@ public final class StoreDetailActivity extends BaseActivity implements View.OnCl
     private List<PressBean> mTopTypeList;
     private String[] topTypes = {"分类", "新品", "促销"};
     // 分类
-    private List<PressBean> newTypeList;
+    private List<GoodsParentBean> newTypeList;
     private List<GoodsBean> mShopList;
     // 新品、促销
     private List<NewShopsBean> mNewShopList;
@@ -202,21 +201,21 @@ public final class StoreDetailActivity extends BaseActivity implements View.OnCl
                     }
                     break;
                 case TYPES_SIZE:                // 分类
-                    newTypeList.get(parentPos).setChoose(true);
+                    newTypeList.get(parentPos).setSelected(true);
                     TypeListAdapter listAdapter = new TypeListAdapter(StoreDetailActivity.this, newTypeList);
                     typeList.setAdapter(listAdapter);
                     listAdapter.setOnClickText(position -> {
-                        for (PressBean type : newTypeList) {
-                            type.setChoose(false);
+                        for (GoodsParentBean type : newTypeList) {
+                            type.setSelected(false);
                         }
-                        newTypeList.get(position).setChoose(true);
+                        newTypeList.get(position).setSelected(true);
                         // request
                         showLoading("");
-                        RequestPost.getClassify(newTypeList.get(position).getId(), StoreDetailActivity.this);
+                        RequestPost.getClassify(newTypeList.get(position).getGoodsTypeOneId(), StoreDetailActivity.this);
                         //
                     });
                     // 默认选择第一项
-                    if (newTypeList.get(0).isChoose()) {
+                    if (newTypeList.get(0).isSelected()) {
                         dumpToMhandler(SHOP_SIZE);
                     }
                     break;
@@ -225,7 +224,12 @@ public final class StoreDetailActivity extends BaseActivity implements View.OnCl
                     goodsList.setAdapter(shopAdapter);
                     goodsList.setNumColumns(2);
                     // 二级分类页面
-                    shopAdapter.setOnClickItem(position -> openActivity(SecondaryActivity.class));
+                    shopAdapter.setOnClickItem(position -> {
+                        Intent intent = new Intent(StoreDetailActivity.this, SecondaryActivity.class);
+                        intent.putExtra("typeId", mShopList.get(position).getGoodsTypeTwoId());
+                        intent.putExtra("typeName", mShopList.get(position).getName());
+                        startActivity(intent);
+                    });
                     break;
                 case NEWSHOP_SIZE:          // 新品
                     // setWaterFallShop(mNewShopList);
@@ -284,7 +288,7 @@ public final class StoreDetailActivity extends BaseActivity implements View.OnCl
                 if (result.url().contains("wxapi/v1/clientGoods.php?type=getGoodslist")) {
                     // 商家信息
                     StoresBean storesBean = JsonParser.parseJSONObject(StoresBean.class, JsonParser.parseJSONObject(body.get("data")).get("info"));
-                    if (storesBean != null){
+                    if (storesBean != null) {
                         storeName.setText(storesBean.getName());
                         Glide.with(this).load(storesBean.getIco()).into(storeImg);
                         model.setText(storesBean.getId());
@@ -298,10 +302,10 @@ public final class StoreDetailActivity extends BaseActivity implements View.OnCl
                         if (goodsParentList != null) {
                             newTypeList = new ArrayList<>();
                             for (GoodsParentBean parentBean : goodsParentList) {
-                                PressBean press = new PressBean();
-                                press.setChoose(false);
-                                press.setName(parentBean.getGoodsTypeOne());
-                                press.setId(parentBean.getGoodsTypeOneId());
+                                GoodsParentBean press = new GoodsParentBean();
+                                press.setSelected(false);
+                                press.setGoodsTypeOne(parentBean.getGoodsTypeOne());
+                                press.setGoodsTypeOneId(parentBean.getGoodsTypeOneId());
                                 newTypeList.add(press);
                             }
                         }
@@ -323,7 +327,7 @@ public final class StoreDetailActivity extends BaseActivity implements View.OnCl
                     }
                 }
                 // 点击一级分类获取二级分类
-                if (result.url().contains("wxapi/v1/clientGoods.php?type=getClassify")){
+                if (result.url().contains("wxapi/v1/clientGoods.php?type=getClassify")) {
                     List<GoodsBean> goodsList = JsonParser.parseJSONArray(GoodsBean.class, JsonParser.parseJSONObject(body.get("data")).get("goodsTypeTwo"));
                     if (goodsList != null) {
                         mShopList = new ArrayList<>();

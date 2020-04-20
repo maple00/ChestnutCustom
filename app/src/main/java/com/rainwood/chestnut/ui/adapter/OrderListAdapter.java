@@ -87,7 +87,7 @@ public final class OrderListAdapter extends BaseAdapter {
                 + "<font color=" + mContext.getResources().getColor(R.color.red30)
                 + " size='" + FontDisplayUtil.dip2px(mContext, 14f) + "'><b>"
                 + getItem(position).getMoney() + "€</b></font>"));
-        // 待收货订单显示收获
+        // 待收货订单显示收货
         if (getItem(position).getWorkFlow().equals("待收货")) {
             holder.btn_confirm_order.setVisibility(View.VISIBLE);
         } else {

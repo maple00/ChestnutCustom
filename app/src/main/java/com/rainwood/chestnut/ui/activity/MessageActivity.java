@@ -91,7 +91,7 @@ public final class MessageActivity extends BaseActivity implements View.OnClickL
                             msgContent.what = INITIAL_SIZE;
                             mHandler.sendMessage(msgContent);
                             mRefreshLayout.setLoadMore(false);
-                        }, 1000 * 2);
+                        }, 10 * 2);
                     });
                     // 下拉刷新
                     mRefreshLayout.setOnRefreshListener(() -> {
@@ -102,7 +102,7 @@ public final class MessageActivity extends BaseActivity implements View.OnClickL
                             msgContent.what = INITIAL_SIZE;
                             mHandler.sendMessage(msgContent);
                             mRefreshLayout.setRefreshing(false);
-                        }, 1000 * 2);
+                        }, 10 * 2);
                     });
                     // 第一次进来的时候刷新
                     mRefreshLayout.setOnAutoLoadListener(() -> {
@@ -112,7 +112,7 @@ public final class MessageActivity extends BaseActivity implements View.OnClickL
                             msgContent.what = INITIAL_SIZE;
                             mHandler.sendMessage(msgContent);
                             mRefreshLayout.setRefreshing(false);
-                        }, 1000 * 2);
+                        }, 10 * 2);
                     });
                     mRefreshLayout.autoRefresh();
                     break;

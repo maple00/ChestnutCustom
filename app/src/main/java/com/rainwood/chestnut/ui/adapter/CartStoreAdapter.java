@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.rainwood.chestnut.R;
 import com.rainwood.chestnut.domain.StoreBean;
+import com.rainwood.chestnut.domain.StoreListBean;
 import com.rainwood.tools.viewinject.OnClick;
 
 import java.util.List;
@@ -23,9 +24,9 @@ import java.util.List;
 public final class CartStoreAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<StoreBean> mList;
+    private List<StoreListBean> mList;
 
-    public CartStoreAdapter(Context context, List<StoreBean> list) {
+    public CartStoreAdapter(Context context, List<StoreListBean> list) {
         mContext = context;
         mList = list;
     }
@@ -36,7 +37,7 @@ public final class CartStoreAdapter extends BaseAdapter {
     }
 
     @Override
-    public StoreBean getItem(int position) {
+    public StoreListBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -59,7 +60,7 @@ public final class CartStoreAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.tv_name.setText(getItem(position).getName());
-        holder.tv_total_amount.setText(getItem(position).getTotalAmount());
+        holder.tv_total_amount.setText(getItem(position).getTotalMoney());
         holder.ll_item.setOnClickListener(v -> mOnClickItem.onClickItem(position));
         return convertView;
     }

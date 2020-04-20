@@ -10,6 +10,14 @@ public class TitleAndHintBean  {
     private String title;
     private String label;
 
+    @Override
+    public String toString() {
+        return "TitleAndHintBean{" +
+                "title='" + title + '\'' +
+                ", label='" + label + '\'' +
+                '}';
+    }
+
     public String getTitle() {
         return title;
     }

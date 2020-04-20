@@ -18,6 +18,7 @@ public class CartBean implements Serializable {
     private String model;              // 商品型号
     private List<SpecialBean> skulist;       // 商品规格
 
+
     public boolean isChecked() {
         return checked;
     }

@@ -118,14 +118,12 @@ public final class ShopDetailAdapter extends BaseAdapter {
 
         private ShopDetailAdapter adapter;
         private int position;
-        private EditText editText;
         private ViewHolder holder;
 
         public TextChangeListener(ShopDetailAdapter adapter, ViewHolder holder, int position, EditText editText) {
             this.adapter = adapter;
             this.holder = holder;
             this.position = position;
-            this.editText = editText;
         }
 
         @Override

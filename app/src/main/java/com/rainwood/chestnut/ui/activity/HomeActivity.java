@@ -1,6 +1,7 @@
 package com.rainwood.chestnut.ui.activity;
 
 import android.util.SparseArray;
+import android.view.KeyEvent;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment;
 
 import com.rainwood.chestnut.R;
 import com.rainwood.chestnut.base.BaseActivity;
+import com.rainwood.chestnut.common.App;
 import com.rainwood.chestnut.common.Contants;
 import com.rainwood.chestnut.ui.fragment.CartFragment;
 import com.rainwood.chestnut.ui.fragment.GoodsFragment;
@@ -103,5 +105,20 @@ public final class HomeActivity extends BaseActivity {
     }
 
     // 再摁一次退出到桌面
+    private long mExitTime;
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {         // 回到Home页
+            if ((System.currentTimeMillis() - mExitTime) > 2000) {
+                toast("再按一次退出到桌面");
+                mExitTime = System.currentTimeMillis();
+                return false;
+            } else {
+                App.backHome(this);
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }

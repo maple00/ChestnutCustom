@@ -1,9 +1,11 @@
 package com.rainwood.chestnut.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -11,16 +13,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
 import com.rainwood.chestnut.R;
 import com.rainwood.chestnut.base.BaseActivity;
 import com.rainwood.chestnut.common.Contants;
-import com.rainwood.chestnut.domain.CartBean;
+import com.rainwood.chestnut.domain.AddressBean;
+import com.rainwood.chestnut.domain.GoodDetailBean;
 import com.rainwood.chestnut.domain.SpecialBean;
-import com.rainwood.chestnut.domain.SureOrderBean;
 import com.rainwood.chestnut.domain.TitleAndHintBean;
-import com.rainwood.chestnut.ui.adapter.CartAdapter;
+import com.rainwood.chestnut.json.JsonParser;
+import com.rainwood.chestnut.okhttp.HttpResponse;
+import com.rainwood.chestnut.okhttp.OnHttpListener;
+import com.rainwood.chestnut.request.RequestPost;
 import com.rainwood.chestnut.ui.adapter.OrderSummaryAdapter;
+import com.rainwood.chestnut.ui.adapter.SureOrderSpecialAdapter;
 import com.rainwood.chestnut.utils.PhoneCallUtils;
 import com.rainwood.tools.common.FontDisplayUtil;
 import com.rainwood.tools.viewinject.ViewById;
@@ -28,13 +36,18 @@ import com.rainwood.tools.widget.MeasureListView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static com.rainwood.chestnut.common.Contants.ADDRESS_REQUEST;
 
 /**
  * @Author: a797s
  * @Date: 2020/3/3 10:38
  * @Desc: 确认订单
  */
-public final class SureOrderActivity extends BaseActivity implements View.OnClickListener {
+public final class SureOrderActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
+
+    private String mSendMethodId = "1";
 
     @Override
     protected int getLayoutId() {
@@ -64,6 +77,13 @@ public final class SureOrderActivity extends BaseActivity implements View.OnClic
     @ViewById(R.id.tv_address)
     private TextView address;
     // 商品
+    @ViewById(R.id.iv_img)
+    private ImageView goodsImage;
+    @ViewById(R.id.tv_name)
+    private TextView goodsName;
+    @ViewById(R.id.tv_number)
+    private TextView model;
+
     @ViewById(R.id.mlv_goods_list)
     private MeasureListView goodsList;
     @ViewById(R.id.mlv_summary_list)
@@ -79,66 +99,31 @@ public final class SureOrderActivity extends BaseActivity implements View.OnClic
 
     // mHandler
     private final int INITIAL_SIZE = 0x101;
-
-    private SureOrderBean mSureOrder;
+    private String[] titles = {"商品总价", "折扣", "实付款"};
+    private GoodDetailBean mGoodDetailBean;
+    private List<SpecialBean> mSpecialList;
+    private AddressBean mAddressBean;
+    private List<TitleAndHintBean> mTitleAndHintList;
 
     @Override
     protected void initView() {
         // 初始化点击事件
         initClickView();
+        String goodsId = getIntent().getStringExtra("goodsId");
+        String storeId = getIntent().getStringExtra("storeId");
+        // request
+        showLoading("");
+        RequestPost.getConfirmOrderPage(goodsId, storeId, this);
+    }
 
-        Message msg = new Message();
-        msg.what = INITIAL_SIZE;
-        mHandler.sendMessage(msg);
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
     protected void initData() {
         super.initData();
-        mSureOrder = new SureOrderBean();
-        mSureOrder.setExpressName("李亚奇");
-        mSureOrder.setExpressTel("13512270415");
-        mSureOrder.setAddres("重庆市南岸区弹子石国际商务大厦A座22-2");
-        mSureOrder.setServiceTel("10086");      // 客服电话
-        List<TitleAndHintBean> summaryList = new ArrayList<>();
-        for (int i = 0; i < titles.length; i++) {
-            TitleAndHintBean summary = new TitleAndHintBean();
-            summary.setTitle(titles[i]);
-            summary.setLabel("50€");
-            summaryList.add(summary);
-        }
-        mSureOrder.setSummaryList(summaryList);
-        List<CartBean> goodsList = new ArrayList<>();
-        for (int i = 0; i < 1; i++) {
-            CartBean cart = new CartBean();
-            cart.setIco(null);
-            cart.setModel("GD-002650");
-            List<SpecialBean> specialList = new ArrayList<>();
-            if (i == 0) {
-                cart.setGoodsName("预售影儿诗篇女装新款双排扣网纱波点袖修身连衣裙预售影儿诗篇女装新款双排扣网纱波点袖修身连衣裙...");
-                for (int j = 0; j < 5; j++) {
-                    SpecialBean special = new SpecialBean();
-                    special.setSkuName("酒红色/M");
-                    special.setPrice("90.5€");
-                    special.setNum("200");
-                    special.setTotalMoney("18100€");
-                    specialList.add(special);
-                }
-            } else {
-                cart.setGoodsName("欧根纱印花翻领女上衣");
-                for (int j = 0; j < 3; j++) {
-                    SpecialBean special = new SpecialBean();
-                    special.setSkuName("酒红色/M");
-                    special.setPrice("90.5€");
-                    special.setNum("200");
-                    special.setTotalMoney("18100€");
-                    specialList.add(special);
-                }
-            }
-            cart.setSkulist(specialList);
-            goodsList.add(cart);
-        }
-        mSureOrder.setGoodsList(goodsList);
     }
 
     @Override
@@ -149,31 +134,62 @@ public final class SureOrderActivity extends BaseActivity implements View.OnClic
                 break;
             case R.id.iv_express:
             case R.id.tv_express:
-                toast("快递");
+                //toast("快递");
                 storeName.setVisibility(View.GONE);
                 llRecipient.setVisibility(View.VISIBLE);
                 ivInvite.setImageResource(R.drawable.shape_uncheck_shape);
                 ivExpress.setImageResource(R.drawable.shape_checked_shape);
-
+                mSendMethodId = "1";
                 break;
             case R.id.tv_invite:
             case R.id.iv_invite:
-                toast("门店自取");
+                // toast("门店自取");
                 storeName.setVisibility(View.VISIBLE);
                 llRecipient.setVisibility(View.GONE);
                 ivInvite.setImageResource(R.drawable.shape_checked_shape);
                 ivExpress.setImageResource(R.drawable.shape_uncheck_shape);
-
+                mSendMethodId = "2";
                 break;
             case R.id.tv_address:
-                toast("选择地址");
+                // toast("选择地址");
+                Contants.ADDRESS_POS_SIZE = 0x101;
+                Intent intent = new Intent(this, ShipAddressActivity.class);
+                startActivityForResult(intent, ADDRESS_REQUEST);
                 break;
             case R.id.ll_service_phone:         // 联系客服
-                PhoneCallUtils.callPhoneDump(this, mSureOrder.getServiceTel());
+                PhoneCallUtils.callPhoneDump(this, mGoodDetailBean.getTel());
                 break;
             case R.id.btn_commit_order:         // 提交订单
-                openActivity(SuccessActivity.class);
+                String addId;
+                if (addressId != null) {         // 选择默认的地址
+                    addId = addressId;
+                } else {
+                    addId = mAddressBean.getId();
+                }
+                // request
+                showLoading("");
+                RequestPost.commitOrder(mGoodDetailBean.getGoodsId(), mGoodDetailBean.getStoreId(), addId, mSendMethodId, this);
                 break;
+        }
+    }
+
+    private String addressId;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // 确认订单收货地址
+        if (requestCode == ADDRESS_REQUEST && resultCode == ADDRESS_REQUEST) {
+            addressId = data.getStringExtra("addressId");
+            String addressName = data.getStringExtra("address");
+            String contact = data.getStringExtra("contact");
+            String contactTel = data.getStringExtra("tel");
+            //Log.d(TAG, "=========== " + addressId + " ========== " + addressName);
+            post(() -> {
+                address.setText(addressName);
+                tvRecipient.setText(contact);
+                tel.setText(contactTel);
+            });
         }
     }
 
@@ -196,25 +212,80 @@ public final class SureOrderActivity extends BaseActivity implements View.OnClic
             super.handleMessage(msg);
             switch (msg.what) {
                 case INITIAL_SIZE:
-                    tvRecipient.setText(mSureOrder.getExpressName());
-                    tel.setText(mSureOrder.getExpressTel());
-                    address.setText(mSureOrder.getAddres());
+                    tvRecipient.setText(mAddressBean == null ? "" : mAddressBean.getContactName());
+                    tel.setText(mAddressBean == null ? "" : mAddressBean.getContactTel());
+                    if (mAddressBean == null){
+                        address.setHint("请选择收货地址");
+                    }else {
+                        address.setText(mAddressBean.getAddressMx());
+                    }
                     orderPay.setText(Html.fromHtml("<font color=" + getResources().getColor(R.color.textColor) + " size='"
                             + FontDisplayUtil.dip2px(SureOrderActivity.this, 12f) + "'>需支付：</font>"
                             + "<font color=" + getResources().getColor(R.color.red30) + " size='"
                             + FontDisplayUtil.dip2px(SureOrderActivity.this, 18f) + "'><b>"
-                            + "151010.5€" + "</b></font>"));
+                            + mGoodDetailBean.getRealPayMoney() + "</b></font>"));
                     // 商品
                     Contants.RECORD_POS = 0x102;
-                    //CartAdapter goodsAdapter = new CartAdapter(SureOrderActivity.this, mSureOrder.getGoodsList());
-                    //goodsList.setAdapter(goodsAdapter);
+                    Glide.with(SureOrderActivity.this).load(mGoodDetailBean.getIco()).into(goodsImage);
+                    goodsName.setText(mGoodDetailBean.getGoodsName());
+                    model.setText(mGoodDetailBean.getModel());
+                    SureOrderSpecialAdapter sureOrderSpecialAdapter = new SureOrderSpecialAdapter(SureOrderActivity.this, mSpecialList);
+                    goodsList.setAdapter(sureOrderSpecialAdapter);
                     // 汇总
-                   // OrderSummaryAdapter summaryList = new OrderSummaryAdapter(SureOrderActivity.this, mSureOrder.getSummaryList());
-                   // mSummaryList.setAdapter(summaryList);
+                    OrderSummaryAdapter summaryList = new OrderSummaryAdapter(SureOrderActivity.this, mTitleAndHintList);
+                    mSummaryList.setAdapter(summaryList);
                     break;
             }
         }
     };
 
-    private String[] titles = {"商品总价", "运费", "折扣", "实付款"};
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        // Log.d(TAG, " ---- result ----- " + result);
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                // 获取订单页面的内容
+                if (result.url().contains("wxapi/v1/clientGoods.php?type=getConfirmOrderPage")) {
+                    mGoodDetailBean = JsonParser.parseJSONObject(GoodDetailBean.class, JsonParser.parseJSONObject(body.get("data")).get("goodsInfo"));
+                    mSpecialList = JsonParser.parseJSONArray(SpecialBean.class, JsonParser.parseJSONObject(body.get("data")).get("skulist"));
+                    mAddressBean = JsonParser.parseJSONObject(AddressBean.class, JsonParser.parseJSONObject(body.get("data")).get("address"));
+                    mTitleAndHintList = new ArrayList<>();
+                    for (int i = 0; i < titles.length; i++) {
+                        TitleAndHintBean hint = new TitleAndHintBean();
+                        hint.setTitle(titles[i]);
+                        switch (i) {
+                            case 0:             // 商品总价
+                                hint.setLabel(mGoodDetailBean.getTotalMoney());
+                                break;
+                            case 1:             // 折扣
+                                hint.setLabel(mGoodDetailBean.getDiscountMoney());
+                                break;
+                            case 2:             // 实际付款
+                                hint.setLabel(mGoodDetailBean.getRealPayMoney());
+                                break;
+                        }
+                        mTitleAndHintList.add(hint);
+                    }
+
+                    Message msg = new Message();
+                    msg.what = INITIAL_SIZE;
+                    mHandler.sendMessage(msg);
+                }
+                // 提交订单
+                if (result.url().contains("wxapi/v1/clientGoods.php?type=commitOrder")) {
+                    toast(body.get("warn"));
+                    postDelayed(() -> openActivity(SuccessActivity.class), 1000);
+                }
+            } else {
+                toast(body.get("warn"));
+            }
+            dismissLoading();
+        }
+    }
 }

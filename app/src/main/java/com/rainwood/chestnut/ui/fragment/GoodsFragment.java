@@ -33,7 +33,6 @@ import com.rainwood.chestnut.request.RequestPost;
 import com.rainwood.chestnut.ui.activity.SearchViewActivity;
 import com.rainwood.chestnut.ui.activity.SecondaryActivity;
 import com.rainwood.chestnut.ui.activity.ShopDetailActivity;
-import com.rainwood.chestnut.ui.activity.StoreDetailActivity;
 import com.rainwood.chestnut.ui.adapter.PromotionWaterFallAdapter;
 import com.rainwood.chestnut.ui.adapter.ShopAdapter;
 import com.rainwood.chestnut.ui.adapter.ShopWaterFallAdapter;
@@ -86,7 +85,7 @@ public final class GoodsFragment extends BaseFragment implements View.OnClickLis
     private List<PressBean> mTopTypeList;
     private String[] topTypes = {"分类", "新品", "促销"};
     // 分类
-    private List<PressBean> newTypeList;
+    private List<GoodsParentBean> newTypeList;
     private List<GoodsBean> mShopList;
     // 新品、促销
     private List<NewShopsBean> mNewShopList;
@@ -176,7 +175,7 @@ public final class GoodsFragment extends BaseFragment implements View.OnClickLis
             super.handleMessage(msg);
             switch (msg.what) {
                 case INITIAL_SIZE:
-                    TopTypesAdapter typesAdapter = new TopTypesAdapter(getActivity(), mTopTypeList);
+                    TopTypesAdapter typesAdapter = new TopTypesAdapter(getmContext(), mTopTypeList);
                     topType.setAdapter(typesAdapter);
                     topType.setNumColumns(3);
                     typesAdapter.setOnClickItem(position -> {
@@ -220,21 +219,21 @@ public final class GoodsFragment extends BaseFragment implements View.OnClickLis
                     }
                     break;
                 case TYPES_SIZE:                // 分类
-                    newTypeList.get(parentPos).setChoose(true);
-                    TypeListAdapter listAdapter = new TypeListAdapter(getContext(), newTypeList);
+                    newTypeList.get(parentPos).setSelected(true);
+                    TypeListAdapter listAdapter = new TypeListAdapter(getmContext(), newTypeList);
                     typeList.setAdapter(listAdapter);
                     listAdapter.setOnClickText(position -> {
-                        for (PressBean type : newTypeList) {
-                            type.setChoose(false);
+                        for (GoodsParentBean type : newTypeList) {
+                            type.setSelected(false);
                         }
-                        newTypeList.get(position).setChoose(true);
+                        newTypeList.get(position).setSelected(true);
                         // request
                         showLoading("");
-                        RequestPost.getClassify(newTypeList.get(position).getId(), GoodsFragment.this);
+                        RequestPost.getClassify(newTypeList.get(position).getGoodsTypeOneId(), GoodsFragment.this);
                         //
                     });
                     // 默认选择第一项
-                    if (newTypeList.get(0).isChoose()) {
+                    if (newTypeList.get(0).isSelected()) {
                         dumpToMhandler(SHOP_SIZE);
                     }
                     break;
@@ -243,7 +242,12 @@ public final class GoodsFragment extends BaseFragment implements View.OnClickLis
                     goodsList.setAdapter(shopAdapter);
                     goodsList.setNumColumns(2);
                     // 二级分类页面
-                    shopAdapter.setOnClickItem(position -> startActivity(SecondaryActivity.class));
+                    shopAdapter.setOnClickItem(position -> {
+                        Intent intent = new Intent(getContext(), SecondaryActivity.class);
+                        intent.putExtra("typeId", mShopList.get(position).getGoodsTypeTwoId());
+                        intent.putExtra("typeName", mShopList.get(position).getName());
+                        startActivity(intent);
+                    });
                     break;
                 case NEWSHOP_SIZE:          // 新品
                     // setWaterFallShop(mNewShopList);
@@ -305,7 +309,7 @@ public final class GoodsFragment extends BaseFragment implements View.OnClickLis
                     StoresBean storesBean = JsonParser.parseJSONObject(StoresBean.class, JsonParser.parseJSONObject(body.get("data")).get("info"));
                     if (storesBean != null) {
                         mGoodsName.setText(storesBean.getName());
-                        Glide.with(this).load(storesBean.getIco()).into(mGoodsImg);
+                        Glide.with(getmContext()).load(storesBean.getIco()).into(mGoodsImg);
                         mStoreNum.setText(storesBean.getId());
                         mStoreTel.setText(storesBean.getTel());
                         mStoreDesc.setText(storesBean.getText());
@@ -317,10 +321,10 @@ public final class GoodsFragment extends BaseFragment implements View.OnClickLis
                         if (goodsParentList != null) {
                             newTypeList = new ArrayList<>();
                             for (GoodsParentBean parentBean : goodsParentList) {
-                                PressBean press = new PressBean();
-                                press.setChoose(false);
-                                press.setName(parentBean.getGoodsTypeOne());
-                                press.setId(parentBean.getGoodsTypeOneId());
+                                GoodsParentBean press = new GoodsParentBean();
+                                press.setSelected(false);
+                                press.setGoodsTypeOne(parentBean.getGoodsTypeOne());
+                                press.setGoodsTypeOneId(parentBean.getGoodsTypeOneId());
                                 newTypeList.add(press);
                             }
                         }
@@ -353,7 +357,8 @@ public final class GoodsFragment extends BaseFragment implements View.OnClickLis
             } else {
                 toast(body.get("warn"));
             }
-            dismissLoading();
+            if (getDialog() != null)
+                dismissLoading();
         }
     }
 }

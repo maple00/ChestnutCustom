@@ -4,7 +4,6 @@
     <dimen name="line_size">1px</dimen>
     <!-- 默认按钮的圆角大小 -->
     <dimen name="button_round_size">4dp</dimen>
-    <dimen name="button_round_0size">0dp</dimen>
 
     <!-- 消息对话框圆角大小 -->
     <dimen name="dialog_message_round_size">15dp</dimen>

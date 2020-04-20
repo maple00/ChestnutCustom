@@ -85,9 +85,6 @@ public final class CodeVerifyActivity extends BaseActivity implements OnClickLis
             public void afterTextChanged(Editable mText) {
                 if ("重新发送验证码".contentEquals(mText)) {    // 计时器完毕
                     verifyCountDown.setOnClickListener(CodeVerifyActivity.this);
-                    // request 重新发送验证码
-                    showLoading("loading");
-                    RequestPost.getVerifyCode(mTel, "", CodeVerifyActivity.this);
                 }
             }
         });

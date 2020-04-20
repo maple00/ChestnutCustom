@@ -3,6 +3,7 @@ package com.rainwood.chestnut.ui.activity;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,10 +22,16 @@ import com.rainwood.chestnut.domain.ShipNewAddressBean;
 import com.rainwood.chestnut.json.JsonParser;
 import com.rainwood.chestnut.okhttp.HttpResponse;
 import com.rainwood.chestnut.okhttp.OnHttpListener;
+import com.rainwood.chestnut.okhttp.RequestParams;
+import com.rainwood.chestnut.other.BaseDialog;
 import com.rainwood.chestnut.request.RequestPost;
-import com.rainwood.chestnut.ui.adapter.ShipNewAddressAdapter;
+import com.rainwood.chestnut.ui.dialog.MenuDialog;
+import com.rainwood.tools.view.ClearEditText;
 import com.rainwood.tools.viewinject.ViewById;
 import com.rainwood.tools.widget.MeasureListView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +45,7 @@ import java.util.Map;
 public final class ShipNewAddressActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
 
     private String mAddressId;
+    private AddressBean mAddress1;
 
     @Override
     protected int getLayoutId() {
@@ -56,50 +64,43 @@ public final class ShipNewAddressActivity extends BaseActivity implements View.O
     private ImageView checked;
     @ViewById(R.id.btn_save)
     private Button save;
+    //
+    @ViewById(R.id.cet_company)
+    private ClearEditText company;
+    @ViewById(R.id.cet_contact)
+    private ClearEditText contact;
+    @ViewById(R.id.cet_tel)
+    private ClearEditText contactTel;
+    @ViewById(R.id.tv_region)
+    private TextView region;
+    @ViewById(R.id.cet_address_detail)
+    private ClearEditText addressDetail;
 
-    private ShipNewAddressBean mAddress;
-    // mHandler
-    private final int INITAL_SIZE = 0x101;
-    private List<ComEditBean> mList;
-    private String[] titles = {"公司", "税号(P.IVA)", "PEC邮箱/SDI", "收件人", "联系电话", "所在地区", "详细地址"};
-    private String[] labels = {"请填写公司名称", "请填写公司税号", "请填写", "请填写收件人姓名", "请填写收件人手机号",
-            "请选择", "请填写详细地址，方便快递员投递"};
+    private ShipNewAddressBean mAddress = new ShipNewAddressBean();
+    private List<String> addressList;
 
     @Override
     protected void initView() {
         pageBack.setOnClickListener(this);
         setDefault.setOnClickListener(this);
         save.setOnClickListener(this);
-        pageTitle.setText("新增收货地址");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mAddressId = getIntent().getStringExtra("addressId");
-        // request -- 收货地址
-        if (mAddress != null && Contants.RECORD_POS == 0x104) {
-            showLoading("loading");
+        region.setOnClickListener(this);
+        if (Contants.RECORD_POS == 0x104){
+            pageTitle.setText("编辑收货地址");
+            // request -- 收货地址
+            mAddressId = getIntent().getStringExtra("addressId");
             RequestPost.getAddressDetail(mAddressId, this);
+        }else {
+            pageTitle.setText("新增收货地址");
         }
     }
 
     @Override
     protected void initData() {
         super.initData();
-        mAddress = new ShipNewAddressBean();
-        mList = new ArrayList<>();
-        for (int i = 0; i < titles.length; i++) {
-            ComEditBean common = new ComEditBean();
-            common.setTitle(titles[i]);
-            common.setHint(labels[i]);
-            if (labels[i].equals("请选择")) {
-                common.setArrow(1);
-            } else {
-                common.setArrow(0);
-            }
-            mList.add(common);
-        }
+        // request  -- 获取国家列表
+        showLoading("");
+        RequestPost.getRegion(this);
     }
 
     @Override
@@ -117,32 +118,62 @@ public final class ShipNewAddressActivity extends BaseActivity implements View.O
                     checked.setImageResource(R.drawable.shape_uncheck_shape);
                 }
                 break;
+            case R.id.tv_region:        // 选择国家地区
+                new MenuDialog.Builder(this)
+                        .setCancel(R.string.common_cancel)
+                        .setAutoDismiss(false)
+                        .setList(addressList)
+                        .setCanceledOnTouchOutside(false)
+                        .setListener(new MenuDialog.OnListener<String>() {
+                            @Override
+                            public void onSelected(BaseDialog dialog, int position, String text) {
+                                // toast("位置：" + position + ", 文本：" + text);
+                                dialog.dismiss();
+                                region.setText(text);
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        }).show();
+                break;
             case R.id.btn_save:
-                toast("保存");
+                if (TextUtils.isEmpty(company.getText())){
+                    toast("请输入公司名称");
+                    return;
+                }
+                if (TextUtils.isEmpty(contact.getText())){
+                    toast("请输入联系人");
+                    return;
+                }
+                if (TextUtils.isEmpty(contactTel.getText())){
+                    toast("请输入联系电话");
+                    return;
+                }
+                if (TextUtils.isEmpty(region.getText())){
+                    toast("请选择地区");
+                    return;
+                }
+                if (TextUtils.isEmpty(addressDetail.getText())){
+                    toast("请输入详细地址");
+                    return;
+                }
+                // request
+                showLoading("");
+                if (Contants.RECORD_POS == 0x104){      // 编辑地址
+                    RequestPost.addressEdit(mAddressId, company.getText().toString().trim(), contact.getText().toString().trim(),
+                            contactTel.getText().toString().trim(), region.getText().toString().trim(), addressDetail.getText().toString().trim(),
+                            mAddress.isOrDefault() ? "1" : "0", this);
+                }else {             // 新增
+                    RequestPost.addressEdit("", company.getText().toString().trim(), contact.getText().toString().trim(),
+                            contactTel.getText().toString().trim(), region.getText().toString().trim(), addressDetail.getText().toString().trim(),
+                            mAddress.isOrDefault() ? "1" : "0", this);
+                }
                 break;
 
         }
     }
-
-    @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case INITAL_SIZE:
-                    ShipNewAddressAdapter newAddressAdapter = new ShipNewAddressAdapter(ShipNewAddressActivity.this, mList);
-                    contentList.setAdapter(newAddressAdapter);
-                    newAddressAdapter.setOnClickEdit(new ShipNewAddressAdapter.OnClickEdit() {
-                        @Override
-                        public void onClickEdit(int position) {
-                            toast("点击了：" + position);
-                        }
-                    });
-                    break;
-            }
-        }
-    };
 
     @Override
     public void onHttpFailure(HttpResponse result) {
@@ -157,44 +188,34 @@ public final class ShipNewAddressActivity extends BaseActivity implements View.O
             if ("1".equals(body.get("code"))) {
                 // 获取收货地址详情
                 if (result.url().contains("wxapi/v1/clientPerson.php?type=getAddressInfo")) {
-                    AddressBean address = JsonParser.parseJSONObject(AddressBean.class, JsonParser.parseJSONObject(body.get("data")).get("info"));
-                    if (address != null) {
-                        Log.d(TAG, " =======  address ===== " + address.toString());
-                        for (int i = 0; i < mList.size(); i++) {
-                            switch (i) {
-                                case 0:                 // 公司名称
-                                    mList.get(i).setText(address.getCompanyName());
-                                    break;
-                                case 1:                 // 税号
-                                    mList.get(i).setText(address.getCompanyName());
-                                    break;
-                                case 2:                 // 邮箱
-                                    mList.get(i).setText(address.getCompanyName());
-                                    break;
-                                case 3:                 // 收件人
-                                    mList.get(i).setText(address.getContactName());
-                                    break;
-                                case 4:                 // 联系电话
-                                    mList.get(i).setText(address.getContactTel());
-                                    break;
-                                case 5:                 // 所在地区
-                                    mList.get(i).setText(address.getRegion());
-                                    break;
-                                case 6:                 // 详细地址
-                                    mList.get(i).setText(address.getAddressMx());
-                                    break;
-                            }
-                        }
-                        Message msg = new Message();
-                        msg.what = INITAL_SIZE;
-                        mHandler.sendMessage(msg);
-                    }
+                    mAddress1 = JsonParser.parseJSONObject(AddressBean.class, JsonParser.parseJSONObject(body.get("data")).get("info"));
 
+                    company.setText(mAddress1.getCompanyName());
+                    contact.setText(mAddress1.getContactName());
+                    contactTel.setText(mAddress1.getContactTel());
+                    region.setText(mAddress1.getRegion());
+                    addressDetail.setText(mAddress1.getAddressMx());
                 }
-            } else {
-                toast(body.get("warn"));
+                // 新增/编辑收货地址
+                if (result.url().contains("wxapi/v1/clientPerson.php?type=addressEdit")){
+                    toast(body.get("warn"));
+                }
+                // get 国家地区列表
+                if (result.url().contains("wxapi/v1/clientPerson.php?type=getRegion")){
+                    JSONArray regionList = JsonParser.parseJSONArrayString(JsonParser.parseJSONObject(body.get("data")).get("regionlist"));
+                    addressList = new ArrayList<>();
+                    for (int i = 0; i < regionList.length(); i++) {
+                        try {
+                            addressList.add(regionList.getString(i));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
-            dismissLoading();
+        } else {
+            toast(body.get("warn"));
         }
+        dismissLoading();
     }
 }

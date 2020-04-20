@@ -6,9 +6,12 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.rainwood.chestnut.common.Contants;
 import com.rainwood.chestnut.other.ActivityStackManager;
 import com.rainwood.chestnut.ui.activity.CrashActivity;
 import com.rainwood.chestnut.ui.activity.HomeActivity;
+import com.rainwood.chestnut.ui.activity.SplashActivity;
+import com.rainwood.chestnut.utils.DeviceIdUtils;
 import com.rainwood.tools.toast.ToastInterceptor;
 import com.rainwood.tools.toast.ToastUtils;
 
@@ -75,16 +78,19 @@ public class BaseApplication extends Application {
                 .trackActivities(true)
                 .minTimeBetweenCrashesMs(2000)
                 // 重启的 Activity
-                .restartActivity(HomeActivity.class)
+                .restartActivity(SplashActivity.class)
                 // 错误的 Activity
                 .errorActivity(CrashActivity.class)
                 // 设置监听器
                 //.eventListener(new YourCustomEventListener())
                 .apply();
 
+        // 启动时生成token
+        Contants.token = DeviceIdUtils.getDeviceId(this);
+
     }
 
-    public boolean isDetermineNetwork(){
+    public boolean isDetermineNetwork() {
         return true;
     }
 }

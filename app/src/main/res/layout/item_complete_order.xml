@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp">
+
+    <TextView
+        android:id="@+id/tv_special"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:textColor="@color/textColor"
+        android:lineSpacingExtra="18sp"/>
+
+    <TextView
+        android:id="@+id/tv_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@color/textColor"
+        android:layout_alignParentEnd="true"/>
+
+    <TextView
+        android:id="@+id/tv_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:layout_below="@+id/tv_special"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/tv_refunds"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:paddingStart="17dp"
+        android:paddingEnd="17dp"
+        android:background="@drawable/shape_white_3"
+        android:text="@string/order_detail_refunds"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/tv_price"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/textColor"/>
+
+</RelativeLayout>

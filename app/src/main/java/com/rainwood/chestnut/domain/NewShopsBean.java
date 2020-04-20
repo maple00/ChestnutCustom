@@ -11,11 +11,20 @@ public final class NewShopsBean implements Serializable {
 
     private String id;                  // 商品id
     private String ico;                 // 商品图片
+    private String newGoods;            // 是否是新商品 -- 0 不是，1 是
     private String name;                // 商品名称
     private String model;               // 商品型号
     private String minPrice;            // 最小价格
     private String maxPrice;            // 最大价格
     private String cartNum;             // 购物车数量
+
+    public String getNewGoods() {
+        return newGoods;
+    }
+
+    public void setNewGoods(String newGoods) {
+        this.newGoods = newGoods;
+    }
 
     public String getId() {
         return id;

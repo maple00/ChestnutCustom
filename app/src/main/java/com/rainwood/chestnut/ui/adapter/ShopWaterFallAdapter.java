@@ -62,6 +62,12 @@ public final class ShopWaterFallAdapter extends RecyclerView.Adapter<ShopWaterFa
         holder.tv_name.setText(mList.get(position).getName());
         holder.tv_num.setText(mList.get(position).getModel());
         holder.tv_number.setText(mList.get(position).getCartNum());
+        // 是否是新商品
+        if ("1".equals(mList.get(position).getNewGoods())) {
+            holder.iv_label.setVisibility(View.VISIBLE);
+        }else {
+            holder.iv_label.setVisibility(View.GONE);
+        }
         // 如果最大价格和最小价格相等
         if (mList.get(position).getMinPrice().equals(mList.get(position).getMaxPrice())) {
             holder.tv_price.setText(mList.get(position).getMinPrice());

@@ -113,7 +113,6 @@ public final class ShopDetailActivity extends BaseActivity implements View.OnCli
         mXBanner.setPageChangeDuration(1000);
     }
 
-
     @Override
     protected void initData() {
         super.initData();
@@ -133,14 +132,18 @@ public final class ShopDetailActivity extends BaseActivity implements View.OnCli
         }
         switch (v.getId()) {
             case R.id.iv_back:
-                if (count < 100) {
+                String[] split = minReserve.getText().toString().trim().split("最小起订量：");
+                int i = Integer.parseInt(split[1]);
+                if (count < i || count <= 0) {
                     setTips();
                 } else {
                     finish();
                 }
                 break;
             case R.id.iv_cart:              // 弹窗显示
-                if (count < Integer.parseInt(mShop.getMinReserve())) {
+                String[] minBooking = minReserve.getText().toString().trim().split("最小起订量：");
+                int minSum = Integer.parseInt(minBooking[1]);
+                if (count < minSum || count <= 0) {
                     setTips();
                 } else {             // 跳转到购物车
                     postDelayed(() -> {
@@ -177,12 +180,16 @@ public final class ShopDetailActivity extends BaseActivity implements View.OnCli
                         public void onClickEditReduce(int position) {
                             // 文本框的数量
                             setTextNumber(position, 0);
+                            // TODO:
+                            RequestPost.addInCart("add", mList.get(position).getId(), mList.get(position).getNum(), ShopDetailActivity.this);
                         }
 
                         @Override
                         public void onClickEditPlus(int position) {
                             // 文本框的数量
                             setTextNumber(position, 1);
+                            // TODO:
+                            RequestPost.addInCart("dec", mList.get(position).getId(), mList.get(position).getNum(), ShopDetailActivity.this);
                         }
 
                         @Override
@@ -190,8 +197,10 @@ public final class ShopDetailActivity extends BaseActivity implements View.OnCli
                             selected.setText(Html.fromHtml("<font color=" + getResources().getColor(R.color.red30) + " size='"
                                     + FontDisplayUtil.dip2px(ShopDetailActivity.this, 12f) + "'>已选"
                                     + adapter.sumCount() + "件</font>"));
+                            // TODO:
+                            RequestPost.addInCart("edit", mList.get(position).getId(),
+                                    mList.get(position).getNum() == null ? "0" : mList.get(position).getNum(), ShopDetailActivity.this);
                         }
-
                     });
                     break;
                 default:
@@ -232,6 +241,8 @@ public final class ShopDetailActivity extends BaseActivity implements View.OnCli
      * 显示弹窗
      */
     private void setTips() {
+        String[] minBooking = minReserve.getText().toString().trim().split("最小起订量：");
+        int minSum = Integer.parseInt(minBooking[1]);
         new MessageDialog.Builder(this)
                 .setTitle("您添加的商品未达到起订量")
                 .setMessage(Html.fromHtml("<font color=" + getResources().getColor(R.color.textColor)
@@ -239,7 +250,7 @@ public final class ShopDetailActivity extends BaseActivity implements View.OnCli
                         + "'>最小起订量：" + "</font>" +
                         "<font color=" + getResources().getColor(R.color.red30)
                         + " size='" + FontDisplayUtil.dip2px(ShopDetailActivity.this, 13f) + "'>"
-                        + mShop.getMinReserve() + "</font>"))
+                        + minSum + "</font>"))
                 .setConfirm(getString(R.string.dialog_keep_add))
                 .setCancel(getString(R.string.dialog_give_up))
                 .setAutoDismiss(false)
@@ -300,20 +311,34 @@ public final class ShopDetailActivity extends BaseActivity implements View.OnCli
                             + "<font color=" + getResources().getColor(R.color.textColor) + " size='"
                             + FontDisplayUtil.dip2px(ShopDetailActivity.this, 12f) + "'><b>"
                             + goodsDetail.getStartNum() + "</b></font>"));
-                    if (goodsDetail.getMinPrice().equals(goodsDetail.getMaxPrice())){
-                        discountPrice.setText(goodsDetail.getMinPrice());
-                    }else {
-                        discountPrice.setText(goodsDetail.getMinPrice() + " - " +goodsDetail.getMaxPrice());
-                    }
-                    if (goodsDetail.getOldMinPrice().equals(goodsDetail.getOldMaxPrice())){
-                        price.setText(goodsDetail.getOldMinPrice());
-                    }else {
-                        price.setText(goodsDetail.getOldMinPrice() + " - " + goodsDetail.getMaxPrice());
+                    if (goodsDetail.getMinPrice().equals(goodsDetail.getMaxPrice()) && "0".equals(goodsDetail.getMinPrice())) {
+                        price.setVisibility(View.GONE);
+                        if (goodsDetail.getOldMinPrice().equals(goodsDetail.getOldMaxPrice())) {
+                            discountPrice.setText(goodsDetail.getOldMinPrice());
+                        } else {
+                            discountPrice.setText(goodsDetail.getOldMinPrice() + " - " + goodsDetail.getMaxPrice());
+                        }
+                    } else {
+                        price.setVisibility(View.VISIBLE);
+                        if (goodsDetail.getMinPrice().equals(goodsDetail.getMaxPrice())) {
+                            discountPrice.setText(goodsDetail.getMinPrice());
+                        } else {
+                            discountPrice.setText(goodsDetail.getMinPrice() + " - " + goodsDetail.getMaxPrice());
+                        }
+                        if (goodsDetail.getOldMinPrice().equals(goodsDetail.getOldMaxPrice())) {
+                            price.setText(goodsDetail.getOldMinPrice());
+                        } else {
+                            price.setText(goodsDetail.getOldMinPrice() + " - " + goodsDetail.getMaxPrice());
+                        }
                     }
                     // 规格
                     Message msg = new Message();
                     msg.what = INITIAL_SIZE;
                     mHandler.sendMessage(msg);
+                }
+                // 添加商品到购物车
+                if (result.url().contains("wxapi/v1/clientGoods.php?type=addInCart")){
+                    //toast(body.get("warn"));
                 }
             } else {
                 toast(body.get("warn"));

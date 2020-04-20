@@ -28,6 +28,7 @@ import com.rainwood.tools.permission.XXPermissions;
 import com.rainwood.tools.widget.NumberProgressBar;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
@@ -371,7 +372,11 @@ public final class UpdateDialog {
         private void openDownloadFile() {
             // 这里需要特别说明的是，这个 API 其实不是打开文件的，我也不知道干什么用的
             // 测试前必须要加权限，否则会崩溃：<uses-permission android:name="android.permission.ACCESS_ALL_DOWNLOADS" />
-            // mDownloadManager.openDownloadedFile(mDownloadId);
+            try {
+                mDownloadManager.openDownloadedFile(mDownloadId);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
             Uri uri;

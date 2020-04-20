@@ -39,9 +39,15 @@ public class JsonEscape {
         if (stringParams.contains("<")) {
             stringParams = stringParams.replace(">", "&lt;");
         }
-//        if (stringParams.contains(" ")) {
-//            stringParams = stringParams.replace(" ", "&nbsp;");
-//        }
+        if (stringParams.contains(" ")) {
+            stringParams = stringParams.replace(" ", "&nbsp;");
+        }
+        if (stringParams.contains("\\")) {
+            stringParams = stringParams.replace("\\", "&quot;");
+        }
+        if (stringParams.contains("\\'")) {
+            stringParams = stringParams.replace("\\'", "&#39;");
+        }
         if (stringParams.contains("\\")) {
             stringParams = stringParams.replace("\\", "&quot;");
         }

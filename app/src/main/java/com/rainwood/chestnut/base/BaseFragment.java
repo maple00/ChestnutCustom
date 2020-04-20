@@ -31,8 +31,8 @@ import com.rainwood.tools.toast.ToastUtils;
 public abstract class BaseFragment extends Fragment {
 
     //获取TAG的fragment名称
-    //protected final String TAG = this.getClass().getSimpleName();
-    protected final String TAG = "sxs";
+    protected final String TAG = this.getClass().getSimpleName();
+//    protected final String TAG = "sxs";
 
     /**
      * 全局ViewGroup
@@ -106,6 +106,12 @@ public abstract class BaseFragment extends Fragment {
             if (rootView != null)
                 rootView.addView(mStatusBarView, 0);
         }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mContext = context;
     }
 
     /**
@@ -183,6 +189,14 @@ public abstract class BaseFragment extends Fragment {
      * 显示加载中
      */
     private DialogUtils mDialog;
+
+    public DialogUtils getDialog() {
+        return mDialog;
+    }
+
+    public void setDialog(DialogUtils dialog) {
+        mDialog = dialog;
+    }
 
     public void showLoading(String tips) {
         mDialog = new DialogUtils(getContext());
